@@ -17,10 +17,6 @@
 // #define NDEBUG  // 是否禁用验证层
 
 
-
-std::vector<const char *> getRequiredExtensions();
-void setupDebugMessenger(VkInstance &instance);
-
 // 默认开启DEBUG模式，使得验证层可以打印输出一些调试信息
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -30,6 +26,9 @@ const bool enableValidationLayers = true;
 
 extern const std::vector<const char *> validationLayers;
 extern VkDebugUtilsMessengerEXT debugMessenger;
+
+std::vector<const char *> getRequiredExtensions();
+void setupDebugMessenger(VkInstance &instance);
 
 
 void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);

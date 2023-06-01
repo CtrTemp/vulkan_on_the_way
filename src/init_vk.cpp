@@ -91,6 +91,8 @@ void initVulkan()
     // 第一步就应该是创建一个 instance 它将作为你的应用与vulkan库之间的桥梁
     createInstance();
     setupDebugMessenger(instance);
+    pickPhysicalDevice(instance);
+    createLogicalDevice();
 }
 
 void vkInstanceCleanUp()
