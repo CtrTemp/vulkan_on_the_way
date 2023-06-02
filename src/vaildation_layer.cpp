@@ -50,6 +50,7 @@ bool checkValidationLayerSupport()
     {
         std::cout << "\t" << layer.layerName << std::endl;
     }
+    std::cout << std::endl;
 
     // 遍历当前定义的验证层，查看其是否在可用的验证层中
     // 其中 validationLayers 是我们定义在文件中的全局变量，表示选中的验证层
@@ -75,6 +76,8 @@ bool checkValidationLayerSupport()
         }
     }
     std::cout << "All selected validation layers available" << std::endl;
+    std::cout << std::endl;
+
     return true;
 }
 
@@ -98,6 +101,14 @@ std::vector<const char *> getRequiredExtensions()
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
 
+    // required extension 打印输出验证
+    std::cout << "Required extensions:" << std::endl;
+    for (const auto &requiredExtension : extensions)
+    {
+        std::cout << requiredExtension << std::endl;
+    }
+    std::cout << std::endl;
+
     return extensions;
 }
 
@@ -106,7 +117,7 @@ std::vector<const char *> getRequiredExtensions()
  *
  *  即：当程序中出现一些错误/生辰一些信息，并且在你使能了验证层后，程序会自动调用这个回调函数，参数的传入都是自动的
  * 下面的回调函数中，你只需要决定何时去对这些信息作何操作即可（比如当问题严重性超过某个阈值后进行打印输出）
- * 
+ *
  *
  *  1、参数1：VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity
  *  指出消息的严重性等级，是一系列的枚举值，并可以进行大小比较，以下的枚举值，从上到下严重性依次增加：
@@ -166,7 +177,7 @@ void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &create
     createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
     createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = debugCallback; // 以上的配置是传入这个回调函数的配置，对应选项在以上的回调函数参数中有说明
-    createInfo.pUserData = nullptr; // Optional 用户传入的额外信息是可选的，不必须
+    createInfo.pUserData = nullptr;             // Optional 用户传入的额外信息是可选的，不必须
 
     // std::string userTransData = "CtrTemp";  // 你想传入的自定义信息，可以在回调函数中打印
     // createInfo.pUserData = (char *)userTransData.c_str();

@@ -23,6 +23,10 @@ int main()
         glfwPollEvents();
     }
 
+    cleanupImageView();
+
+    cleanupSwapChain();
+
     logicalDeviceCleanup();
 
     surfaceCleanUp(instance);

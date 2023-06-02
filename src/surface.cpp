@@ -18,7 +18,8 @@
 // surface 类加入
 VkSurfaceKHR surface;
 
-VkQueue presentQueue; // 用于处理 “图形展示指令” 的队列
+VkQueue graphicsQueue;  // 用于处理 “图形绘制指令” 的队列（将在之后的 logical device 部分进行初始化）
+VkQueue presentQueue;   // 用于处理 “图形展示指令” 的队列（将在之后的 logical device 部分进行初始化）
 
 void createSurface(VkInstance instance, GLFWwindow *window)
 {

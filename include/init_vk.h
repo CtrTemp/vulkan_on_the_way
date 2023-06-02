@@ -17,9 +17,11 @@
 
 #include "init_window.h"
 #include "vaildation_layer.h"
+#include "surface.h"
 #include "physical_device_queue.h"
 #include "logical_device_queue.h"
-#include "surface.h"
+#include "swapchain.h"
+#include "image_view.h"
 
 
 // 声明全局vulkan实例

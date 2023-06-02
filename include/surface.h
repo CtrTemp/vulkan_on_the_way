@@ -16,8 +16,9 @@
 
 // surface 类加入
 extern VkSurfaceKHR surface;
-// 显示队列
-extern VkQueue presentQueue;
+
+extern VkQueue graphicsQueue;   // 用于处理 “图形绘制指令” 的队列
+extern VkQueue presentQueue;    // 用于处理 “图形展示指令” 的队列
 
 
 void createSurface(VkInstance instance, GLFWwindow *window);

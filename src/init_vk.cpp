@@ -22,6 +22,7 @@ void checkExtension()
     {
         std::cout << "\t" << extension.extensionName << std::endl;
     }
+    std::cout << std::endl;
 }
 
 /**
@@ -86,14 +87,17 @@ void createInstance()
 
 void initVulkan()
 {
-    // 在创建 instance 之前可以先查看以下支持的扩展，并打印输出
-    checkExtension();
+    // // 在创建 instance 之前可以先查看以下支持的扩展，并打印输出（这只是一个罗列查看，去掉也无妨）
+    // checkExtension();
     // 第一步就应该是创建一个 instance 它将作为你的应用与vulkan库之间的桥梁
     createInstance();
+
     setupDebugMessenger(instance);
     createSurface(instance, window);
     pickPhysicalDevice(instance);
     createLogicalDevice();
+    createImageViews(); // 这里我是反过来了，既然imageView是swapChain的一个依赖，那就应该把他放到前面去初始化
+    createSwapChain();
 }
 
 void vkInstanceCleanUp()

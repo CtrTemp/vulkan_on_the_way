@@ -17,17 +17,12 @@
 
 #include <cstring>
 
-
 #include "vaildation_layer.h"
 #include "physical_device_queue.h"
 
-extern VkDevice device;
-extern VkQueue graphicsQueue;
-
+extern VkDevice device; // 逻辑设备，物理设备的映射
 
 void createLogicalDevice();
 void logicalDeviceCleanup();
-
-
 
 #endif
