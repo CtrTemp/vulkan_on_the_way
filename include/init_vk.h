@@ -1,9 +1,6 @@
 #ifndef INIT_VK_H
 #define INIT_VK_H
 
-
-
-
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -16,6 +13,7 @@
 #include <vector>
 
 #include "init_window.h"
+#include "vk_instance.h"
 #include "vaildation_layer.h"
 #include "surface.h"
 #include "physical_device_queue.h"
@@ -24,12 +22,17 @@
 #include "image_view.h"
 
 
-// 声明全局vulkan实例
-extern VkInstance instance;
 
-// 只有这个初始化函数的接口暴露给其他文件调用
+/**
+ *  当前vulkan图形工程总体的初始化配置，对一些渲染管线中必要的实例对象的创建
+ * */
 void initVulkan();
 
 
-#endif
 
+/**
+ *  实例对象的析构销毁，基本遵循先创建的后销毁，后创建的先销毁
+ * */
+void cleanupVulkan(); // 对vulkan创建的对象进行统一销毁
+
+#endif

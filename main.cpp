@@ -23,17 +23,8 @@ int main()
         glfwPollEvents();
     }
 
-    cleanupImageView();
 
-    cleanupSwapChain();
-
-    logicalDeviceCleanup();
-
-    surfaceCleanUp(instance);
-
-    vkInstanceCleanUp();
-
-    windowCleanup();
+    cleanupVulkan();
 
     return 0;
 }

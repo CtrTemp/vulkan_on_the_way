@@ -16,21 +16,25 @@
 #include <set>
 
 #include "logical_device_queue.h"
+#include "swapchain.h"
 
+// 声明用于填入swap chain的Image
+extern std::vector<VkImage> swapChainImages;
 
-
-extern std::vector<VkImage> swapChainImages; // 声明用于填入交换链的Image
+// 声明用于填充swap chain的Image的格式（这个与之前配置的swap chain中的格式保持一致即可）
 extern VkFormat swapChainImageFormat;
 
-// 如 Introduction 部分所说，首先添加一个 VkImageView 类型 vector 的成员变量
+// 每个swap chain中的Image都要对应一个ImageView
 extern std::vector<VkImageView> swapChainImageViews;
 
-
-
-
+/**
+ *  ImageView相关实例的创建
+ * */
 void createImageViews();
+
+/**
+ *  ImageView相关实例的销毁
+ * */
 void cleanupImageView();
-
-
 
 #endif

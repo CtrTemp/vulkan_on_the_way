@@ -7,7 +7,6 @@ VkDevice device; // 逻辑设备，物理设备的映射，一个物理设备可
  *  逻辑设备创建：在这里我们可以看到
  *  1、一个物理设备可以对应多个逻辑设备（当然目前还只有一个逻辑设备）
  *  2、一个逻辑设备对应多个指令队列（这是合情合理的，需要有多种不同需求的指令集需要被不同的队列进行处理）
- *
  * */
 void createLogicalDevice()
 {
@@ -64,9 +63,7 @@ void createLogicalDevice()
         throw std::runtime_error("failed to create logical device!");
     }
 
-    // 这个函数将初始化文件全局变量 graphicsQueue
-    // 输入参数依次为 逻辑设备/队列系列/队列索引/指向存储队列句柄的变量指针
-    // 因为我们只需要一个队列序列，故这里传入的队列索引为0
+    // 实例化逻辑设备后，我们将其指令集队列映射到我们预先定义好的两个指令集队列上（相当于之前只是声明了但没有初始化，这里初始化其对象）。
     vkGetDeviceQueue(device, queueIndices.graphicsFamily.value(), 0, &graphicsQueue);
     vkGetDeviceQueue(device, queueIndices.presentFamily.value(), 0, &presentQueue);
 }

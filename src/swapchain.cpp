@@ -1,6 +1,10 @@
 #include "swapchain.h"
 
-VkSwapchainKHR swapChain;             // 定义交换链对象
+VkSwapchainKHR swapChain; // 定义交换链对象
+
+VkSurfaceFormatKHR swapChainSurfaceFormat;
+VkPresentModeKHR swapChainPresentMode;
+VkExtent2D swapChainExtent;
 
 /*
     本章是Vulkan关键的交换链部分;
@@ -119,12 +123,15 @@ void createSwapChain()
     // SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
 
     // 其次根据实际情况，给出当前创建swap chain最优的配置选择（以下就是三个主项，在第四步中介绍过）
-    VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainDetails.formats); // 这个在之后第七步存入了成员变量
-    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainDetails.presentModes);
-    VkExtent2D extent = chooseSwapExtent(swapChainDetails.capabilities); // 这个在之后第七步存入了成员变量
+    swapChainSurfaceFormat = chooseSwapSurfaceFormat(swapChainDetails.formats); // 这个在之后第七步存入了成员变量
+    swapChainPresentMode = chooseSwapPresentMode(swapChainDetails.presentModes);
+    swapChainExtent = chooseSwapExtent(swapChainDetails.capabilities); // 这个在之后第七步存入了成员变量
 
     // 除此之外，我们还需要确定在交换链中存储的图片数量，这里我们初始化为最小值
     uint32_t imageCount = swapChainDetails.capabilities.minImageCount;
+    std::cout << "minimum image count in swap chain = " << imageCount << std::endl
+              << std::endl;
+
     if (swapChainDetails.capabilities.maxImageCount > 0 && imageCount > swapChainDetails.capabilities.maxImageCount)
     { // 当支持的最大值大于0且当前所设置的imageCount大于支持的最大值，则将imageCount置为所支持的最大值
         // 需要注意的是，0在这里带有特殊意义，代表“不限制最大交换链中图片数量”
@@ -138,10 +145,10 @@ void createSwapChain()
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = surface;
     createInfo.minImageCount = imageCount;
-    createInfo.imageFormat = surfaceFormat.format;
-    createInfo.imageColorSpace = surfaceFormat.colorSpace;
+    createInfo.imageFormat = swapChainSurfaceFormat.format;
+    createInfo.imageColorSpace = swapChainSurfaceFormat.colorSpace;
     // 通过注销掉下面这行，可以测试验证层的功能，会引起其报错提示！！
-    createInfo.imageExtent = extent;
+    createInfo.imageExtent = swapChainExtent;
     createInfo.imageArrayLayers = 1;
     // imageArrayLayers指定每个图像包含的层的数量。除非您正在开发立体3D应用程序，否则此值始终为1。
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
@@ -178,7 +185,7 @@ void createSwapChain()
     // 下面这个用于忽略 alpha 通道混合
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
-    createInfo.presentMode = presentMode;
+    createInfo.presentMode = swapChainPresentMode;
     // 设为VK_TRUE，被遮挡的像素我们不进行考虑，不会花费多余的计算！提供最优性能
     createInfo.clipped = VK_TRUE;
 
@@ -201,11 +208,12 @@ void createSwapChain()
     因此允许实现创建具有更多图像的交换链。这就是为什么我们将首先使用vkGetSwapchainImagesKHR查询最终数量
     的图像，然后调整容器大小，最后再次调用它以检索句柄。
     */
-    vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
-    swapChainImages.resize(imageCount);
-    vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
-}
 
+    // // 现在我将以上的语句加到后面image view的创建（反正swapChain是全局可访问的）（成功）
+    // vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+    // swapChainImages.resize(imageCount);
+    // vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+}
 
 void cleanupSwapChain()
 {

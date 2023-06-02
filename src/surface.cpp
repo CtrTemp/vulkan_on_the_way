@@ -18,10 +18,10 @@
 // surface 类加入
 VkSurfaceKHR surface;
 
-VkQueue graphicsQueue;  // 用于处理 “图形绘制指令” 的队列（将在之后的 logical device 部分进行初始化）
-VkQueue presentQueue;   // 用于处理 “图形展示指令” 的队列（将在之后的 logical device 部分进行初始化）
+VkQueue graphicsQueue; // 用于处理 “图形绘制指令” 的队列（将在之后的 logical device 部分进行初始化）
+VkQueue presentQueue;  // 用于处理 “图形展示指令” 的队列（将在之后的 logical device 部分进行初始化）
 
-void createSurface(VkInstance instance, GLFWwindow *window)
+void createSurface()
 {
     // 很直接的创建以及验证，这里不是通过传入结构体的形式传参的
     if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS)
@@ -30,7 +30,7 @@ void createSurface(VkInstance instance, GLFWwindow *window)
     }
 }
 
-void surfaceCleanUp(VkInstance instance)
+void surfaceCleanUp()
 {
     vkDestroySurfaceKHR(instance, surface, nullptr);
 }

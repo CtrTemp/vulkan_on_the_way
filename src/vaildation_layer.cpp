@@ -25,8 +25,9 @@
  *
  * */
 
-const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 
+// 实例所需Layer扩展列表（这里主要对是否支持validation layer进行验证）
+const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 // 用于调试信息输出的回调函数也需要我们手动创建，而且类似的回调我们想创建多少个就创建多少个
 VkDebugUtilsMessengerEXT debugMessenger;
 
@@ -210,7 +211,7 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 /**
  *  启动验证层
  * */
-void setupDebugMessenger(VkInstance &instance)
+void setupDebugMessenger(VkInstance instance)
 {
     if (!enableValidationLayers)
         return;

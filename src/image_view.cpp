@@ -4,16 +4,27 @@
     Introduction：
     为了使用包括在交换链中的任何的VkImage，在整个渲染管线中，我们需要创建一个VkImageView对象。
 该对象将描述如何访问图像以及要访问图像的哪些部分。例如，如果应该将其视为2D深度纹理，mipmap就不会被使用。
-
 */
 
-std::vector<VkImage> swapChainImages; // 声明用于填入交换链的Image
+// 声明用于填入swap chain的Image
+std::vector<VkImage> swapChainImages;
+
+// 声明用于填充swap chain的Image的格式（这个与之前配置的swap chain中的格式保持一致即可）
 VkFormat swapChainImageFormat;
+
+// 每个swap chain中的Image都要对应一个ImageView
 std::vector<VkImageView> swapChainImageViews;
+
 
 // 创建 ImageView
 void createImageViews()
 {
+    swapChainImageFormat = swapChainSurfaceFormat.format; // image 格式要与swap chain选择的格式保持一致
+    uint32_t imageCount = swapChainDetails.capabilities.minImageCount;
+    vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
+    swapChainImages.resize(imageCount);
+    vkGetSwapchainImagesKHR(device, swapChain, &imageCount, swapChainImages.data());
+
     // 第一步要做的就是将 ImageView 的size设置成交换链中图像的大小，保持同步统一
     swapChainImageViews.resize(swapChainImages.size());
 

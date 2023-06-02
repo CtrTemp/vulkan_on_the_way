@@ -22,7 +22,22 @@
 
 extern VkDevice device; // 逻辑设备，物理设备的映射
 
+/**
+ *  逻辑设备是物理设备的映射，
+ * 
+ *  1、一个物理设备将可以映射出多个逻辑设备（这里我们只映射一个逻辑设备）
+ *  2、我们之后的操作都是基于逻辑设备的操作而非物理设备
+ * */ 
+
+
+/**
+ *  创建逻辑设备实例
+ * */ 
 void createLogicalDevice();
+
+/**
+ *  销毁逻辑设备实例
+ * */ 
 void logicalDeviceCleanup();
 
 #endif

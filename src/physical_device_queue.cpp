@@ -14,7 +14,7 @@ const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_N
  * 可以是一块也可以是多块，在这里我们只选用一块
  *
  * */
-void pickPhysicalDevice(VkInstance &instance)
+void pickPhysicalDevice()
 {
     // 显卡个数
     uint32_t deviceCount = 0;
