@@ -23,8 +23,9 @@ int main()
         glfwPollEvents();
     }
 
-
     logicalDeviceCleanup();
+
+    surfaceCleanUp(instance);
 
     vkInstanceCleanUp();
 

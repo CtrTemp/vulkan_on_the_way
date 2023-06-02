@@ -15,10 +15,11 @@
 #include <string>
 #include <vector>
 
-
+#include "init_window.h"
 #include "vaildation_layer.h"
 #include "physical_device_queue.h"
 #include "logical_device_queue.h"
+#include "surface.h"
 
 
 // 声明全局vulkan实例
