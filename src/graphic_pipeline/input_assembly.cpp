@@ -4,11 +4,10 @@ void configure_input_assembly(VkPipelineInputAssemblyStateCreateInfo &inputAssem
 {
     
     /*
-        第二步：输入“装配”
+        输入“装配器”：
         通过 VkPipelineInputAssemblyStateCreateInfo 结构体进行描述，它主要描述两件事情：
-        1/将从顶点绘制什么样的几何体
-        2/是否启用基元“重启”
-        （看到这还不太明白，往下看配置项的具体解释）
+        1/将从顶点绘制什么样的几何体（是否要将点连成线？或线连成面）
+        2/是否启用基元“复用”（是否支持顶点重用）
     */
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     /*

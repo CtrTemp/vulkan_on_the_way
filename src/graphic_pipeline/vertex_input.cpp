@@ -3,7 +3,7 @@
 void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInfo)
 {
     /*
-    第一步：从文件中读取顶点信息并进行输入
+    从文件中读取顶点信息并进行输入：
     图形管线的第一步是 Vertex Input，顶点输入，创建以下的结构体来决定对其设置，该步的输出在图形渲染
 管线中将直接传入顶点着色器，故以下字段将考虑这方面的衔接：
     Bindings：导入的数据间距，以及数据是按照顶点传递还是按照实例传递

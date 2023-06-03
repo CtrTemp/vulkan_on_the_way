@@ -3,7 +3,7 @@
 void configure_rasterizer(VkPipelineRasterizationStateCreateInfo &rasterizer)
 {
     /*
-        第四步：光栅化部分
+        光栅化部分
     */
     rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     /*

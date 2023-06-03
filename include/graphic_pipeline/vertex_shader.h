@@ -18,7 +18,9 @@
 
 #include "graphic_pipeline/utils.h"
 
-
+/**
+ *  自定义 vertex shader 配置变量
+ * */ 
 VkShaderModule configure_vertex_shader(VkPipelineShaderStageCreateInfo &vertShaderStageInfo);
 
 

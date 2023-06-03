@@ -3,7 +3,7 @@
 void configure_viewport(VkPipelineViewportStateCreateInfo &viewportState)
 {
     /*
-        第三步：视口以及视口剪切 的创建
+        第三步：视口以及视口的截取
         图形展示窗口的大小，以及设置我们通过视口剪切决定留下哪些展示部分
     */
     VkViewport viewport{};
@@ -28,9 +28,5 @@ void configure_viewport(VkPipelineViewportStateCreateInfo &viewportState)
     viewportState.pViewports = &viewport; // 刚刚配置的视口
     viewportState.scissorCount = 1;       // 窗口中总共一个剪切窗
     viewportState.pScissors = &scissor;   // 刚刚配置的剪切窗
-                                          /*
-                                          翻译摘抄：
-                                          无论您如何设置它们，都可以在某些图形卡上使用多个视口和剪刀矩形，因此结构成员引用它们的阵列。
-                                      使用多个需要启用GPU功能（请参阅逻辑设备创建）。
-                                      */
+    
 }
