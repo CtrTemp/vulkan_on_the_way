@@ -25,6 +25,14 @@ void initVulkan()
     createRenderPass();
 
     createGraphicsPipeline(); // 创建渲染图形管线
+
+    createFramebuffers(); // 创建帧缓冲区
+
+    createCommandPool(); // 创建命令池
+
+    createCommandBuffer(); // 创建命令缓冲区
+
+    createSyncObjects(); // 创建绘制循环中的流控制原语
 }
 
 /**
@@ -32,6 +40,12 @@ void initVulkan()
  * */
 void cleanupVulkan()
 {
+    cleanupRenderLoopRelated();
+
+    cleanupCommandPool();
+
+    cleanupFramebuffer();
+
     cleanupGraphicPipeline();
 
     cleanupRenderPass();

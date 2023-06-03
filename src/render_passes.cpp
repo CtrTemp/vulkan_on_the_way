@@ -2,7 +2,7 @@
 
 VkRenderPass renderPass;
 
-// 创建 Render Pass 
+// 创建 Render Pass
 void createRenderPass()
 {
     /*
@@ -76,14 +76,43 @@ void createRenderPass()
     // 以下是颜色附件的引用，因为我们只需要一个子过程，就是窗口显示渲染结果，那么下面的count配置为1
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef; // 这里为创建的子过程引入刚刚配置的附件
+                                                     /*
+                                                         注意这里配置的字段是 pColorAttachments，然而除了这种类型的组件，还可以引入其他类型的附件，如下，
+                                                     可配置的附件字段还有：（具体的细节之后遇到需求再进行讨论）
+                                                         pInputAttachments:从着色器读取的附件
+                                                         pResolveAttachments：用于多采样颜色附件的附件
+                                                         pDepthStencil附件：深度和模具数据的附件
+                                                         pPreserveAttachments：此子过程未使用但必须保留其数据的附件
+                                                     */
+
     /*
-        注意这里配置的字段是 pColorAttachments，然而除了这种类型的组件，还可以引入其他类型的附件，如下，
-    可配置的附件字段还有：（具体的细节之后遇到需求再进行讨论）
-        pInputAttachments:从着色器读取的附件
-        pResolveAttachments：用于多采样颜色附件的附件
-        pDepthStencil附件：深度和模具数据的附件
-        pPreserveAttachments：此子过程未使用但必须保留其数据的附件
-    */
+             第十步，子过程（Subpass）依赖配置（注意，这里第一次看没有太搞明白）
+             （翻译直译）请记住，渲染过程中的子过程会自动处理图像布局过渡。这些转换由子通道依赖项控制，子通道依赖
+         关系指定子通道之间的内存和执行依赖项。我们现在只有一个子通路，但是在这个子通路之前和之后的操作也算作隐式
+         的“子通路”。
+
+             之前提到像素布局会因子过程的不同而不同，从而提高效率，而布局的转换过程会在渲染过程开始和结束时自动转
+         换，可能这里说的就是这个。
+
+             但目前我们无法保证这种转换发生在正确的时候，因为我们在设置subpass的时候图像还没有被引入。以下配置来
+         解决这个问题。以下提供两种解决方法：
+             1/我们可以将imageAvailableSemaphore的waitStages更改为 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT，
+         以确保渲染过程在图像可用之前不会开始；
+             2/可以使渲染过程等待 VK_PIPE LINE_STAAGE_COLOR_ATTACHMENT_OUTPUTT_BIT 阶段
+             在这里我们选择第二种方式，从而让整个流程看起来更符合程序实际运行中的过程。
+         */
+    VkSubpassDependency dependency{};
+    // 前两个字段指定依赖项以及依赖索引，这里只有一个subpass，所以置为0
+    // 注意 dstSubpass 字段的值一定要高于 srcSubpass
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    // srcStageMask 指定要等待的操作以及这些操作发生的阶段，需要等待交换链读取完图像之后才能访问它
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+
+    // dstStageMask 指定要？？？从这以后就完全看不懂了
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
     /*
         第三步，Render Pass 的创建

@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(vk_demo LANGUAGES CXX)
 
+# 允许GDB调试
+set(CMAKE_BUILD_TYPE DEBUG)
+
+
 # 注意这里不写 ./ 不会默认添加根目录作为 include 的目录
 include_directories(./ ./include)
 

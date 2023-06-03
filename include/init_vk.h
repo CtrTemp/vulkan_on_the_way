@@ -23,6 +23,9 @@
 #include "graphic_pipeline.h"
 #include "render_passes.h"
 
+#include "frame_buffer.h"
+#include "command_buffer.h"
+#include "render_loop.h"
 
 /**
  *  当前vulkan图形工程总体的初始化配置，对一些渲染管线中必要的实例对象的创建

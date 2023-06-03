@@ -9,7 +9,7 @@
 #include <iostream>
 #include "init_window.h"
 #include "init_vk.h"
-#include "vaildation_layer.h"
+#include "render_passes.h"
 
 int main()
 {
@@ -21,8 +21,8 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+        drawFrame();
     }
-
 
     cleanupVulkan();
 

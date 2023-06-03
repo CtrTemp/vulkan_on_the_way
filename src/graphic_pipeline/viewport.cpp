@@ -28,5 +28,8 @@ void configure_viewport(VkPipelineViewportStateCreateInfo &viewportState)
     viewportState.pViewports = &viewport; // 刚刚配置的视口
     viewportState.scissorCount = 1;       // 窗口中总共一个剪切窗
     viewportState.pScissors = &scissor;   // 刚刚配置的剪切窗
-    
+
+    // viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+    // viewportState.viewportCount = 1;
+    // viewportState.scissorCount = 1;
 }
