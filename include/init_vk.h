@@ -20,7 +20,8 @@
 #include "logical_device_queue.h"
 #include "swapchain.h"
 #include "image_view.h"
-
+#include "graphic_pipeline.h"
+#include "render_passes.h"
 
 
 /**

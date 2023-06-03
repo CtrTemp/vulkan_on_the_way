@@ -25,7 +25,6 @@
  *
  * */
 
-
 // 实例所需Layer扩展列表（这里主要对是否支持validation layer进行验证）
 const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
 // 用于调试信息输出的回调函数也需要我们手动创建，而且类似的回调我们想创建多少个就创建多少个
@@ -155,7 +154,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
     {
         // Message is important enough to show
-        std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+        std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl
+                  << std::endl;
     }
 
     // 当然你也可以像下面这样，无差别地打印出回调函数传入的信息

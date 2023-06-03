@@ -21,6 +21,10 @@ void initVulkan()
     createSwapChain(); // 创建交换链
 
     createImageViews(); // 创建配置要填充在交换链中图像实例
+
+    createRenderPass();
+
+    createGraphicsPipeline(); // 创建渲染图形管线
 }
 
 /**
@@ -28,6 +32,10 @@ void initVulkan()
  * */
 void cleanupVulkan()
 {
+    cleanupGraphicPipeline();
+
+    cleanupRenderPass();
+
     cleanupImageView();
 
     cleanupSwapChain();
