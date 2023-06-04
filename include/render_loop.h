@@ -18,19 +18,15 @@
 // 引入计时器，查看程序运行时间（渲染一帧用时）
 #include <ctime>
 
-
 #include "logical_device_queue.h"
 #include "swapchain.h"
 #include "command_buffer.h"
-
-
-
 
 /*
     （题外话：在本章执行程序时发现一个问题，其实读取文件时的相对路径，“相对的”并非是可执行文件的位置，而是看
 你在哪里执行的这个可执行文件！！！）
 
-    Introduction：
+    Brief Introduction：
     Finally！！！在这个章节中，我们最终会看到我们在Vulkan中的第一个渲染结果。我们将在main函数的主循环中
 开始书写函数，让我们的三角形能够通过它展示在先前创建好的窗口中。
     在真正书写这些函数之前，我们应该对总体的流程有一个全局的概览，如下：
@@ -50,7 +46,7 @@ Vulkan提供给我们一些“基元”来告诉GPU我们希望运行的顺序�
     3/将图像从交换链呈现到屏幕，以及将屏幕上的图像返回交换链
     注意，以上的函数操作都是异步调用的，并且在函数内部操作执行完成之前函数就会返回！如果你写过CUDA代码就会知道，
 当你从CPU调用核函数，实际上是告诉GPU执行何种操作，也就是提交任务，而CPU函数不会等待GPU执行完成便会返回。
-    
+
     而这是我们不希望看到的，因为一旦后面的操作需要前面操作的结果，这种异步执行的方式就会造成一些不确定/未定义
 的错乱。所以我们需要使用一些同步语句块/指令/原语来使得程序的执行顺序完全可控。
     （注意，我们是在CPU上编写程序，当然，这里说的函数返回也就是程序返回CPU，而异步执行都是在被我们提交到GPU的
@@ -90,24 +86,67 @@ Vulkan提供给我们一些“基元”来告诉GPU我们希望运行的顺序�
 CPU进行等待。
 */
 
+/**
+ *  Other Problem & Optimization：
+ *  目前我们程序还存在一个明显的问题，这就是我们需要等待上一帧渲染完成后才开始渲染下一帧，这会导致主机不必要的空闲。
+ * （实际上的情况是我们应该一直在往framebuffer里面填充图像，而不是逐帧渲染）
+ *
+ *  解决以上问题的方法就是允许多帧同时运行，也就是说，允许下一帧的渲染不干扰下一帧的录制。然而这应该如何做到呢？首
+ * 先，我们知道在下一帧渲染时候会改变命令缓冲区以及其他一些资源，而这些资源可能正在被当前帧渲染所调用，所以这种情况下
+ * 会造成冲突。我们的方法应该就是在渲染期间复制需要修改和访问的资源，而不是在原本资源上做改动。因此我们需要多个命令缓
+ * 冲区/信号灯/围栏。在之后的章节中，还将添加其他资源的多个实例，因此我们将看到这个概念再次出现。
+ *
+ *
+ *  另外，我个人在运行程序时，发现了一个bug：当运行程序开始时可以自由退出（点击叉按钮），然而一段时间后，再点击退
+ * 出则程序报告“Vulkan无响应”的弹窗，需要强制关闭。这个bug无论在模板程序还是我的个人程序中都会出现。于是我在程序中
+ * 加入了打点计时的模块，看每帧的渲染时间。而后发现在程序最开始运行的一段时间中运行良好，每张图片输出的用时大概在100ms
+ * 左右，而后突然程序停止继续输出，表示它卡在了主循环中的某个位置。具体原因未知，，，不知道是不是和以上描述的问题有关？
+ *
+ *  以上问题在本章得到了一定程度上的解决，我们发现当程序允许多帧任务同时提交时，不仅平均每帧耗时有所下降，且之前的
+ * 运行bug也消失了。不过当我们将 MAX_FRAMES_IN_FLIGHT 设置的比较大的时候，平均渲染每帧的耗时并不会下降很多，但基
+ * 本可以保证至少比每次仅能提交一个任务的时候耗时有所下降。
+ *
+ * */
 
-extern VkSemaphore imageAvailableSemaphore;
-extern VkSemaphore renderFinishedSemaphore;
-extern VkFence inFlightFence;
+// extern VkSemaphore imageAvailableSemaphore;
+// extern VkSemaphore renderFinishedSemaphore;
+// extern VkFence inFlightFence;
+
+extern std::vector<VkSemaphore> imageAvailableSemaphores;
+extern std::vector<VkSemaphore> renderFinishedSemaphores;
+extern std::vector<VkFence> inFlightFences;
+
+// 用于指示当前帧
+extern uint32_t currentFrame;
+
 
 /**
  *  完整的renderloop，在main函数的主循环中执行
- * */ 
+ * */
 void drawFrame();
 
 /**
  *  初始化渲染循环中的流程控件，分别是
- * 
+ *
  *  两个用于控制GPU阻塞执行的“信号灯”；
  *  一个用于控制CPU阻塞任务提交的“栅栏”
- * */ 
+ * */
 void createSyncObjects();
 
+/**
+ *  程序退出时，销毁render loop中有关的组件（这里主要是几个流程控制相关的信号器
+ * */ 
 void cleanupRenderLoopRelated();
+
+
+/**
+ *  窗口大小改变时，销毁原有swapchain相关联的组件
+ * */ 
+void loopCleanupSwapChain();
+
+/**
+ *  窗口大小改变时，重建swapchain
+ * */ 
+void recreateSwapChain();
 
 #endif

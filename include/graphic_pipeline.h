@@ -36,6 +36,8 @@
 #include "render_passes.h"
 
 
+extern const int MAX_FRAMES_IN_FLIGHT;
+
 /*
     Brief Introduction：
     下面我们开始对最基本的光栅化渲染管线的流程做一个概览：

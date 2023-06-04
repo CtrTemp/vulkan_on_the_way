@@ -53,6 +53,21 @@ extern VkPresentModeKHR swapChainPresentMode;
 VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 extern VkExtent2D swapChainExtent;
 
+
+
+
+
+// 声明用于填入swap chain的Image
+extern std::vector<VkImage> swapChainImages;
+
+// 声明用于填充swap chain的Image的格式（这个与之前配置的swap chain中的格式保持一致即可）
+extern VkFormat swapChainImageFormat;
+
+// 每个swap chain中的Image都要对应一个ImageView
+extern std::vector<VkImageView> swapChainImageViews;
+
+
+
 /**
  *  swap chain 实例的创建
  * */

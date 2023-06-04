@@ -32,7 +32,8 @@
 
 extern VkCommandPool commandPool;
 
-extern VkCommandBuffer commandBuffer;
+// extern VkCommandBuffer commandBuffer;
+extern std::vector<VkCommandBuffer> commandBuffers;
 
 /**
  *  创建命令池

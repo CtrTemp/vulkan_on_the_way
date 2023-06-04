@@ -6,15 +6,6 @@
 该对象将描述如何访问图像以及要访问图像的哪些部分。例如，如果应该将其视为2D深度纹理，mipmap就不会被使用。
 */
 
-// 声明用于填入swap chain的Image
-std::vector<VkImage> swapChainImages;
-
-// 声明用于填充swap chain的Image的格式（这个与之前配置的swap chain中的格式保持一致即可）
-VkFormat swapChainImageFormat;
-
-// 每个swap chain中的Image都要对应一个ImageView
-std::vector<VkImageView> swapChainImageViews;
-
 
 // 创建 ImageView
 void createImageViews()

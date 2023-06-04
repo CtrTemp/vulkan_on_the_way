@@ -15,12 +15,16 @@
 #define WIDTH 800
 #define HEIGHT 600
 
+// 声明全局窗口实例
+extern GLFWwindow *window; 
 
-extern GLFWwindow *window; // 声明全局窗口实例
+// 用于指示是否发生了窗口size 改变的事件
+extern bool framebufferResized;
 
 
 void initWindow();
 void windowCleanup();
+static void framebufferResizeCallback(GLFWwindow *window, int width, int height);
 
 
 

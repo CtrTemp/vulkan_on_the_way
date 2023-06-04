@@ -3,6 +3,15 @@
 VkPipelineLayout pipelineLayout; // 添加图形渲染管线
 VkPipeline graphicsPipeline;
 
+/*
+    这里我们在程序顶端定义一个文件可访问的全局变量 MAX_FRAMES_IN_FLIGHT，它将表示CPU可以同时提交给GPU的任务
+量，也就是说，CPU可以不等待GPU执行完任务，仍然向GPU提交任务，这个任务量目前定为x。也就是说，CPU发现GPU中有一个
+正在执行的任务时，仍可以继续提交最多x-1个任务。这样做的好处就是，可以保证GPU的负载一直是充盈的，不会造成资源浪费。
+    没有把这个数字给定的太大是因为我们并不想让CPU“领先”GPU太多（不过这里也没有多解释为什么，只是说能够控制CPU最
+多能够“领先”GPU多少帧，是Vulkan中能够做到底层精确控制的一个很好的体现）
+*/
+const int MAX_FRAMES_IN_FLIGHT = 6;
+
 // 创建渲染图形管线
 void createGraphicsPipeline()
 {

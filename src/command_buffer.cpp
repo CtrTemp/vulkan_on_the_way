@@ -12,7 +12,8 @@ VkCommandPool commandPool;
     在这一步中，我们依赖命令池创建命令缓冲区。
     注意，命令池销毁后，命令缓冲区将会被自动销毁，所以不需要我们去手动销毁
 */
-VkCommandBuffer commandBuffer;
+// VkCommandBuffer commandBuffer;
+std::vector<VkCommandBuffer> commandBuffers;
 
 // 第二步，创建 command pool
 void createCommandPool()
@@ -47,6 +48,9 @@ void createCommandPool()
 // 第四步，创建command buffer
 void createCommandBuffer()
 {
+
+    commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = commandPool;
@@ -59,9 +63,13 @@ void createCommandBuffer()
         这里我们不使用次级命令缓冲区，故配置如下
     */
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    // 因为没有“次级命令缓冲区”，故这里配置为1（只有一个“主命令缓冲区”）
-    allocInfo.commandBufferCount = 1;
-    if (vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS)
+    /**
+     *  由于可以不等待GPU任务执行返回，而向GPU提交超额的任务，这里command buffer的数量可以自定义
+     * 由当前CPU可以超额提交给GPU的最大任务量决定（为每一个任务都配备一个专门的command buffer可能也是为了
+     * 防止command buffer使用冲突）
+     * */ 
+    allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
+    if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to allocate command buffers!");
     }
