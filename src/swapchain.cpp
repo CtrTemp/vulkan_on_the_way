@@ -133,22 +133,23 @@ VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities)
 void createSwapChain()
 {
     // 首先创建一个交换链支持情况结构体，并根据当前硬件设备查询出所支持的实际情况
-    SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
+    swapChainDetails = querySwapChainSupport(physicalDevice);
+    
 
     // 其次根据实际情况，给出当前创建swap chain最优的配置选择（以下就是三个主项，在第四步中介绍过）
-    swapChainSurfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats); // 这个在之后第七步存入了成员变量
-    swapChainPresentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-    swapChainExtent = chooseSwapExtent(swapChainSupport.capabilities); // 这个在之后第七步存入了成员变量
+    swapChainSurfaceFormat = chooseSwapSurfaceFormat(swapChainDetails.formats); // 这个在之后第七步存入了成员变量
+    swapChainPresentMode = chooseSwapPresentMode(swapChainDetails.presentModes);
+    swapChainExtent = chooseSwapExtent(swapChainDetails.capabilities); // 这个在之后第七步存入了成员变量
 
     // 除此之外，我们还需要确定在交换链中存储的图片数量，这里我们初始化为最小值
-    uint32_t imageCount = swapChainSupport.capabilities.minImageCount;
+    uint32_t imageCount = swapChainDetails.capabilities.minImageCount;
     std::cout << "minimum image count in swap chain = " << imageCount << std::endl
               << std::endl;
 
-    if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
+    if (swapChainDetails.capabilities.maxImageCount > 0 && imageCount > swapChainDetails.capabilities.maxImageCount)
     { // 当支持的最大值大于0且当前所设置的imageCount大于支持的最大值，则将imageCount置为所支持的最大值
         // 需要注意的是，0在这里带有特殊意义，代表“不限制最大交换链中图片数量”
-        imageCount = swapChainSupport.capabilities.maxImageCount;
+        imageCount = swapChainDetails.capabilities.maxImageCount;
     }
     // 这里看来应该以上执行完后，imageCount就还是所支持的最小值
 
@@ -194,7 +195,7 @@ void createSwapChain()
     }
 
     // 如果交换链基本功能是支持的，那么这里应该可以指定图像的“预转换”功能
-    createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+    createInfo.preTransform = swapChainDetails.capabilities.currentTransform;
     // 下面这个用于忽略 alpha 通道混合
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 

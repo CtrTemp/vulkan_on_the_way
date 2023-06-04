@@ -10,6 +10,7 @@
 #include "init_window.h"
 #include "init_vk.h"
 #include "render_passes.h"
+#include "init_imgui.h"
 
 int main()
 {
@@ -17,6 +18,8 @@ int main()
     initWindow();
 
     initVulkan();
+
+    init_imgui_frame();
 
     while (!glfwWindowShouldClose(window))
     {
