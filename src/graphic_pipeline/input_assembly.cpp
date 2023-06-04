@@ -1,5 +1,8 @@
 #include "graphic_pipeline/input_assembly.h"
 
+/**
+ *  配置输入“装配器”：描述按照何种规则将顶点连成几何
+ * */ 
 void configure_input_assembly(VkPipelineInputAssemblyStateCreateInfo &inputAssembly)
 {
     

@@ -16,6 +16,10 @@
 #include <optional>
 #include <set>
 
+
+/**
+ *  配置颜色混合：如何从fragment shader中得到的fragment值得到最终pixel的颜色值
+ * */ 
 void configure_color_blending(VkPipelineColorBlendStateCreateInfo &colorBlending);
 
 #endif

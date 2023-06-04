@@ -36,6 +36,7 @@ void createRenderPass()
     stencil（模板）数据项，我们使用stencilLoadOp / stencilStoreOp字段来进行配置（其中枚举值含义相同）
         因为我们现在完全没有启用 stencil buffer（可以参见上一个章节对应部分），所以以下可以暂时设置为“未
     定义”的状态。
+        这里等到depth buffer部分后再来填写注释
     */
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -57,8 +58,8 @@ void createRenderPass()
         finalLayout 字段指示的是渲染过程（Render Pass）完成之后，图像自动转换到的布局。在这里我们使用
     VK_IMAGE_LAYOUT_PRESENT_SRC_KHR 进行设置，表示我们希望图像在渲染之后可以使用交换链进行直接显示。
     */
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;     // 最开始的“格式”
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; // 最终要输出的“格式”
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;     // 最开始的“格式”（we don't care~）
+    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; // 最终要输出的“格式”（要输出展示）
 
     /*
         第二步，Subpasses and attachment reference 子过程和附件参考
@@ -70,7 +71,9 @@ void createRenderPass()
     VkAttachmentReference colorAttachmentRef{};
     colorAttachmentRef.attachment = 0;
     // 针对刚刚上一个步骤中配置的输出的“像素布局”这里作为其下一个步骤就应用到了，并为其布局配置为最优性能
-    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    // colorAttachmentRef.layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    // 为啥这里不是  VK_IMAGE_LAYOUT_PRESENT_SRC_KHR？？？按理说应该与以上的配置保持一致
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; 
     VkSubpassDescription subpass{};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     // 以下是颜色附件的引用，因为我们只需要一个子过程，就是窗口显示渲染结果，那么下面的count配置为1

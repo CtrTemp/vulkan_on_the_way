@@ -1,5 +1,9 @@
 #include "graphic_pipeline/vertex_input.h"
 
+
+/**
+ *  配置顶点数据的传入规则
+ * */ 
 void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInfo)
 {
     /*
@@ -12,7 +16,6 @@ void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInf
     （目前的数据是硬编码在shader文件中的）
     （以下我们先留一个配置进行占位，实际上以下的配置在渲染管线中并不起作用）
 */
-    // VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 0;
     vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional

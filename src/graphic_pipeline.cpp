@@ -109,9 +109,12 @@ void createGraphicsPipeline()
     configure_color_blending(colorBlending);
 
     /**
-     * 创建图形管线
+     *  创建 pipeline layout
      * 
-     * ？？？ pipelineLayout 和 pipeline 有啥区别？？？
+     *  注意这并不是真正的 graphic pipeline，pipeline layout的作用在于给你提供一个接口，
+     *  在后期想在run time（draw time）对渲染结果进行交互，修改参数的时候，可以通过它传入修改值，不过暂时
+     * 我们还没有用到这个功能，此处暂时留空。
+     * 
      * */ 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -150,7 +153,7 @@ void createGraphicsPipeline()
     pipelineInfo.pDynamicState = &dynamicState;
 
     /*
-        第三步，pipeline layout部分
+        第三步，pipeline layout部分（暂时留空）
     */
     pipelineInfo.layout = pipelineLayout;
     /*

@@ -16,7 +16,11 @@
 #include <optional>
 #include <set>
 
+extern std::vector<VkDynamicState> dynamicStates;
 
+/**
+ *  配置 graphic pipeline 确定后，还可进行动态编辑的状态列表
+ * */ 
 void configure_dynamic_state(VkPipelineDynamicStateCreateInfo &dynamicState);
 
 #endif

@@ -3,7 +3,7 @@
 std::vector<VkFramebuffer> swapChainFramebuffers;
 
 /**
- *  创建 framebuffer
+ *  为交换链中的每一个 Image View 都要创建一个 framebuffer
  * */ 
 void createFramebuffers()
 {

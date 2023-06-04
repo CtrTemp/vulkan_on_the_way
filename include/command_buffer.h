@@ -30,20 +30,21 @@
     这时你之前所配置的指令集队列就派上用场了？
 */
 
-
 extern VkCommandPool commandPool;
 
 extern VkCommandBuffer commandBuffer;
 
-
+/**
+ *  创建命令池
+ * */
 void createCommandPool();
+
+/**
+ *  创建命令缓冲区
+ * */
 void createCommandBuffer();
 void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
-
 void cleanupCommandPool();
-
-
-
 
 #endif

@@ -17,7 +17,9 @@
 #include <optional>
 #include <set>
 
+/**
+ *  配置顶点数据的传入规则
+ * */ 
 void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInfo);
-
 
 #endif

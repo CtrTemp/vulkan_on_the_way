@@ -16,9 +16,11 @@
 #include <optional>
 #include <set>
 
-
 #include "swapchain.h"
 
+/**
+ *  配置视口以及视口截取：得到的image将展示到多大的窗口上，剪裁尺寸是多少
+ * */ 
 void configure_viewport(VkPipelineViewportStateCreateInfo &viewportState);
 
 #endif

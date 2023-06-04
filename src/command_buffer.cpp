@@ -3,7 +3,7 @@
 /*
     第一步，创建“命令池”（command pool）
     在创建命令缓冲区（command buffer）之前，必须创建一个命令池。它用于管理存储缓冲区的内存，并从中
-分配出命令缓冲区。在此我们添加入这个全局变量。
+分配出命令缓冲区。
 */
 VkCommandPool commandPool;
 
@@ -11,7 +11,6 @@ VkCommandPool commandPool;
     第三步，创建“命令缓冲区”（command buffer）
     在这一步中，我们依赖命令池创建命令缓冲区。
     注意，命令池销毁后，命令缓冲区将会被自动销毁，所以不需要我们去手动销毁
-    以下添加这个全局变量
 */
 VkCommandBuffer commandBuffer;
 

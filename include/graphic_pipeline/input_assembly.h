@@ -17,7 +17,10 @@
 #include <optional>
 #include <set>
 
-void configure_input_assembly(VkPipelineInputAssemblyStateCreateInfo &inputAssembly);
 
+/**
+ *  配置输入“装配器”：描述按照何种规则将顶点连成几何
+ * */ 
+void configure_input_assembly(VkPipelineInputAssemblyStateCreateInfo &inputAssembly);
 
 #endif

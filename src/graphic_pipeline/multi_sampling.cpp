@@ -1,9 +1,11 @@
 #include "graphic_pipeline/multi_sampling.h"
 
+/**
+ *  配置多重采样，进行图像抗锯齿、提高生成图像质量的之而有效的手段
+ * */
 void configure_multi_sampling(VkPipelineMultisampleStateCreateInfo &multisampling)
 {
     /*
-        第五步：设置多重采样
         这是经典有效的抗锯齿方法之一，工作原理是将多个多边形边缘的光栅化值进行组合考虑（应该就是求加权平均）
     主要对边缘产生的锯齿/伪影起作用。注意要启用多重采样来抗锯齿，则必须启用GPU功能。
     */

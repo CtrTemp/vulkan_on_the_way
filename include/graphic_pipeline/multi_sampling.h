@@ -16,6 +16,10 @@
 #include <optional>
 #include <set>
 
+
+/**
+ *  配置多重采样，进行图像抗锯齿、提高生成图像质量的之而有效的手段
+ * */
 void configure_multi_sampling(VkPipelineMultisampleStateCreateInfo &multisampling);
 
 #endif

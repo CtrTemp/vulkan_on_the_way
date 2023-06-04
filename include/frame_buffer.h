@@ -33,8 +33,15 @@ depth属性，size大小适应swapchain中的image等等，但目前为止我们
 */
 extern std::vector<VkFramebuffer> swapChainFramebuffers;
 
+
+/**
+ *  为交换链中的每一个 Image View 都要创建一个 framebuffer
+ * */ 
 void createFramebuffers();
 
+/**
+ *  销毁 framebuffer
+ * */ 
 void cleanupFramebuffer();
 
 #endif
