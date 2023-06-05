@@ -1,9 +1,8 @@
 #include "graphic_pipeline/vertex_input.h"
 
-
 /**
  *  配置顶点数据的传入规则
- * */ 
+ * */
 void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInfo)
 {
     /*
@@ -15,10 +14,22 @@ void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInf
     （由于当前还不涉及从文件中读入数据，故这部分的知识在涉及模型导入的时候可能会理解的更好）
     （目前的数据是硬编码在shader文件中的）
     （以下我们先留一个配置进行占位，实际上以下的配置在渲染管线中并不起作用）
-*/
+    */
+
+    /*
+        在引入shader的pipeline中对应改写，如下：
+        将刚刚配置的结构体通过执行内置成员函数的方式引入
+    */
+    static VkVertexInputBindingDescription bindingDescription = Vertex::getBindingDescription();
+    static std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions = Vertex::getAttributeDescriptions();
+
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
+    // vertexInputInfo.vertexBindingDescriptionCount = 0;
+    // vertexInputInfo.vertexAttributeDescriptionCount = 0;
+    // 不再将顶点数据从vertex shader文件中写死，而是从程序中定义并导入
+    vertexInputInfo.vertexBindingDescriptionCount = 1;
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+    vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
 }

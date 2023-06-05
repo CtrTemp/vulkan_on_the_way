@@ -22,13 +22,17 @@ void initVulkan()
 
     createImageViews(); // 创建配置要填充在交换链中图像实例
 
-    createRenderPass();
+    createRenderPass(); // 创建渲染流
 
     createGraphicsPipeline(); // 创建渲染图形管线
 
     createFramebuffers(); // 创建帧缓冲区
 
     createCommandPool(); // 创建命令池
+
+    createVertexBuffer(); // 创建顶点缓冲区
+
+    createIndexBuffer();
 
     createCommandBuffer(); // 创建命令缓冲区
 
@@ -40,6 +44,10 @@ void initVulkan()
  * */
 void cleanupVulkan()
 {
+    cleanupSwapChain();
+
+    cleanupVertexBuffer();
+
     cleanupRenderLoopRelated();
 
     cleanupCommandPool();
@@ -51,8 +59,6 @@ void cleanupVulkan()
     cleanupRenderPass();
 
     cleanupImageView();
-
-    cleanupSwapChain();
 
     logicalDeviceCleanup();
 

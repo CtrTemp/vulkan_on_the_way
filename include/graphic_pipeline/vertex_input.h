@@ -1,7 +1,6 @@
 #ifndef VERTEX_INPUT_H
 #define VERTEX_INPUT_H
 
-
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -17,9 +16,12 @@
 #include <optional>
 #include <set>
 
+#include "vertex_buffer.h"
+
 /**
  *  配置顶点数据的传入规则
- * */ 
+ * */
 void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInfo);
+
 
 #endif

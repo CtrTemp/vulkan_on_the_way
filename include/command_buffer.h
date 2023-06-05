@@ -22,6 +22,8 @@
 #include "graphic_pipeline.h"
 #include "frame_buffer.h"
 
+#include "vertex_buffer.h"
+
 /*
     Introduction：
     注意，绘制操作在Vulkan中并不是通过函数调用的方式来实现的，而是通过将全部的绘制相关命令放入一个叫做
