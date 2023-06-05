@@ -28,16 +28,27 @@ void configure_rasterizer(VkPipelineRasterizationStateCreateInfo &rasterizer)
     // 很简单，就是多边形边的宽度（单位猜测应该是pixel）
     // 除了1.0f外的其他值都需要启用GPU功能
     rasterizer.lineWidth = 1.0f;
+    // 用于更改片元深度的，多用于阴影贴图，不过这里还不太用的到，设为VK_FALSE先跳过。
+    // rasterizer.depthBiasEnable = VK_FALSE;
+    // rasterizer.depthBiasConstantFactor = 0.0f; // Optional
+    // rasterizer.depthBiasClamp = 0.0f;          // Optional
+    // rasterizer.depthBiasSlopeFactor = 0.0f;    // Optional
+
     /*
         cullMode 决定剔除哪些面，可以是多边形正面/反面/正反面都剔除，这会提高效率，注意正反面
     是由多边形顶点的顺序决定的。这里我们剔除背面。
         并且以下会定义以顶点顺时针方向视为正面（应该是左手定则）
     */
+
+    // rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+    // rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    /*
+        第四步，由于我们在投影矩阵（Projection）中进行了Y轴翻转（这是由于Vulkan与OpenGL在Y轴
+    正方向上定义的不同，之前我们提到过），目前顶点正在以逆时针顺序绘制三角形，而在这里我们又设置了了
+    以顺时针方向为正方向 VK_FRONT_FACE_CLOCKWISE，且对背面消隐 VK_CULL_MODE_BACK_BIT，所以
+    此时不加修改运行程序会导致我们啥也看不到！！于是修改如下（主要是改了顶点顺序索引）
+    */
     rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
-    // 用于更改片元深度的，多用于阴影贴图，不过这里还不太用的到，设为VK_FALSE先跳过。
+    rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     rasterizer.depthBiasEnable = VK_FALSE;
-    rasterizer.depthBiasConstantFactor = 0.0f; // Optional
-    rasterizer.depthBiasClamp = 0.0f;          // Optional
-    rasterizer.depthBiasSlopeFactor = 0.0f;    // Optional
 }

@@ -95,6 +95,12 @@ void drawFrame()
     }
 
     /*
+        第八步，更新“统一缓冲区”，实际上就是在每一帧都更新并应用一次新的变换阵，从而达到让视图中的
+    元素“动起来”的效果。
+    */
+    updateUniformBuffer(currentFrame);
+
+    /*
         第四步，死锁问题的修复
         解决方案如下，我们将 vkResetFences 函数写在这个位置，也就是说，如果程序在以上的代码段中被提前返回了，
     则 vkResetFences 不会被执行，围栏信号也就不会被重置，那么在下一个loop中也就不会被卡住～
@@ -109,7 +115,7 @@ void drawFrame()
     // 首先对上一次的命令缓冲区进行清除，第二个参数是一个标志位，可以先不管
     vkResetCommandBuffer(commandBuffers[currentFrame], 0);
     // 之后对其进行记录/填充，指定对应交换链中的图像索引，即：这个命令缓冲区将执行的命令绑定到操作对象
-    recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
+    recordCommandBuffer(commandBuffers[currentFrame], imageIndex, currentFrame);
     // 需要一个结构体来设置将命令缓冲区提交到队列时的一些配置信息
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

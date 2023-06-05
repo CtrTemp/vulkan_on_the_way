@@ -21,10 +21,13 @@
 
 #include <array>
 
-#include "physical_device_queue.h"
-#include "logical_device_queue.h"
+// #include "physical_device_queue.h"
+// #include "logical_device_queue.h"
 
-#include "command_buffer.h"
+// #include "command_buffer.h"
+
+#include "buffers/buffers_operation.h"
+
 
 /*
     Introduction 01：
@@ -175,12 +178,6 @@ extern VkDeviceMemory indexBufferMemory;
 void createVertexBuffer();
 
 void createIndexBuffer();
-
-uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-
-void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
-
-void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
 
 void cleanupVertexBuffer();
 

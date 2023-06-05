@@ -46,7 +46,7 @@ void createCommandPool();
  *  创建命令缓冲区
  * */
 void createCommandBuffer();
-void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uint32_t currentFrame);
 
 void cleanupCommandPool();
 

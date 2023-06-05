@@ -80,53 +80,8 @@ void createCommandBuffer()
     其实际作用是将要执行的命令写入命令缓冲区。
     当前还没有实际用到该函数
 */
-void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
+void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uint32_t currentFrame)
 {
-    // VkCommandBufferBeginInfo beginInfo{};
-    // beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-
-    // if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
-    // {
-    //     throw std::runtime_error("failed to begin recording command buffer!");
-    // }
-
-    // VkRenderPassBeginInfo renderPassInfo{};
-    // renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    // renderPassInfo.renderPass = renderPass;
-    // renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
-    // renderPassInfo.renderArea.offset = {0, 0};
-    // renderPassInfo.renderArea.extent = swapChainExtent;
-
-    // VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-    // renderPassInfo.clearValueCount = 1;
-    // renderPassInfo.pClearValues = &clearColor;
-
-    // vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-    // vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
-    // VkViewport viewport{};
-    // viewport.x = 0.0f;
-    // viewport.y = 0.0f;
-    // viewport.width = (float)swapChainExtent.width;
-    // viewport.height = (float)swapChainExtent.height;
-    // viewport.minDepth = 0.0f;
-    // viewport.maxDepth = 1.0f;
-    // vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
-
-    // VkRect2D scissor{};
-    // scissor.offset = {0, 0};
-    // scissor.extent = swapChainExtent;
-    // vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
-
-    // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-
-    // vkCmdEndRenderPass(commandBuffer);
-
-    // if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
-    // {
-    //     throw std::runtime_error("failed to record command buffer!");
-    // }
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     /*
@@ -219,6 +174,28 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex)
     注意 VK_INDEX_TYPE_UINT16 要与indexBuffer创建数组中的类型相一致 unit16_t。
     */
     vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
+    /*
+        第三步，使用描述符
+            这里在记录/填充命令缓冲区的函数中进行修改，将所使用的描述符真正绑定到对应帧，从而在主循环的
+        每帧更新中都会应用到新的描述符来修改多边形网格的“姿态”。以下是参数详解
+        参数1：提交到哪个命令缓冲区
+        参数2：提交到哪个队列（注意，不是默认xxx队列专有的命令，就需要明确选择一个队列提交）
+        参数3：所基于的布局
+        参数4：第一个描述符集的索引（从哪个开始算起，应该可以认为是一种索引偏移）
+        参数5：要绑定的描述符集数量
+        参数6：指定当前帧对应的描述符集
+        参数7：动态描述符偏移量指示（当前章节暂不讨论）
+        参数8：动态描述符偏移量指示（当前章节暂不讨论）
+    */
+    vkCmdBindDescriptorSets(commandBuffer,
+                            VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            pipelineLayout,
+                            0,
+                            1,
+                            &descriptorSets[currentFrame],
+                            0,
+                            nullptr);
 
     /*
         vkCmdDraw参数解释：

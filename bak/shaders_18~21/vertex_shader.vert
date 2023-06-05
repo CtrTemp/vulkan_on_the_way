@@ -7,21 +7,40 @@
 */ 
 #version 450
 
+
+// // 这里预定义三角形的坐标，在非文件读入的时候，我们就这样做
+// vec2 positions[3] = vec2[](
+//     vec2(0.0, -0.5),
+//     vec2(0.5, 0.5),
+//     vec2(-0.5, 0.5)
+// );
+
+
 /*
-    第二步，在这里添加MVP变换阵，引入这个 “统一缓冲区” 对象，可见当前这个对象是在顶点着色器
-文件中硬编码进去的（至少当作一个占位符存在）
+    如果你想让你的三角形的每个顶点有不同的颜色，我们同样可以通过预定义的方式来确定其颜色。
+这里我们将三个顶点刚好置为 R/G/B 全色
+    其实这里的颜色值应该也可以从文件读入
 */ 
-layout(binding = 0) uniform UniformBufferObject {
-    vec2 foo;
-    mat4 model;
-    mat4 view;
-    mat4 proj;
-} ubo;
+// vec3 colors[3] = vec3[](
+//     vec3(1.0, 0.0, 0.0),
+//     vec3(0.0, 1.0, 0.0),
+//     vec3(0.0, 0.0, 1.0)
+// );
+
+/*
+    首先第一步就是注释掉以上的顶点位置/颜色初始化赋值语句，使得我们的顶点不再从文件中硬编码。取而代之的是
+我们从顶点缓冲区获取顶点信息，替换为如下语句：
+*/ 
 
 layout(location = 0) in vec2 inPosition;
 layout(location = 1) in vec3 inColor;
 
 layout(location = 0) out vec3 fragColor;
+
+// 注意当使用 dvec -> 64位双精度类型时，其占位宽度翻倍，变量间隔应至少为2,如下
+
+// layout(location = 0) in dvec3 inPosition;
+// layout(location = 2) in vec3 inColor;
 
 /*
     在 vertex shader 中，每个顶点都会调用一次main()函数！这是在GPU中内置并行的部分。
@@ -33,9 +52,6 @@ layout(location = 0) out vec3 fragColor;
 */ 
 
 void main() {
-    // gl_Position = vec4(inPosition, 0.0, 1.0);
-
-    // 对当前矩阵应用 MVP 变换阵（其实就是连续乘这几个矩阵就好）
-    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 0.0, 1.0);
+    gl_Position = vec4(inPosition, 0.0, 1.0);
     fragColor = inColor;
 }

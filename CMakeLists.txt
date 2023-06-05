@@ -20,6 +20,7 @@ aux_source_directory(./ MAIN_SRC_LIST)
 aux_source_directory(./src MAIN_SRC_LIST)
 aux_source_directory(./src/graphic_pipeline MAIN_SRC_LIST)
 aux_source_directory(./src/imgui MAIN_SRC_LIST)
+aux_source_directory(./src/buffers MAIN_SRC_LIST)
 
 
 add_executable(${PROJECT_NAME} ${MAIN_SRC_LIST})

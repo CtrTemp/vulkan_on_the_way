@@ -36,6 +36,8 @@
 #include "render_passes.h"
 
 
+#include "uniform_buffer.h"
+
 
 extern const int MAX_FRAMES_IN_FLIGHT;
 

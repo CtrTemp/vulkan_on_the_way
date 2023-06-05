@@ -24,6 +24,11 @@ void initVulkan()
 
     createRenderPass(); // 创建渲染流
 
+    // 对描述符池进行销毁。注意不必对描述符集进行销毁，当描述符池被销毁后它会被自动释放
+    vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+
+    createDescriptorSetLayout(); // 创建描述符区
+
     createGraphicsPipeline(); // 创建渲染图形管线
 
     createFramebuffers(); // 创建帧缓冲区
@@ -32,9 +37,14 @@ void initVulkan()
 
     createVertexBuffer(); // 创建顶点缓冲区
 
-    createIndexBuffer();
+    createIndexBuffer(); // 创建索引缓冲区
 
-    createCommandBuffer(); // 创建命令缓冲区
+    createUniformBuffers(); // 创建“统一”缓冲区
+
+    createDescriptorPool(); // 创建描述符池
+    createDescriptorSets(); // 创建描述符集合
+    
+    createCommandBuffer();  // 创建命令缓冲区
 
     createSyncObjects(); // 创建绘制循环中的流控制原语
 }
@@ -46,6 +56,14 @@ void cleanupVulkan()
 {
     cleanupSwapChain();
 
+    cleanupGraphicPipeline();
+
+    cleanupRenderPass();
+
+    cleanupUniformBuffer();
+
+    cleanupDescriptor();
+
     cleanupVertexBuffer();
 
     cleanupRenderLoopRelated();
@@ -53,10 +71,6 @@ void cleanupVulkan()
     cleanupCommandPool();
 
     cleanupFramebuffer();
-
-    cleanupGraphicPipeline();
-
-    cleanupRenderPass();
 
     cleanupImageView();
 
