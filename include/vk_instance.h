@@ -14,11 +14,25 @@
 
 #include "vaildation_layer.h"
 
-extern VkInstance instance; // 声明全局vulkan实例
+// 声明全局vulkan实例
+extern VkInstance instance; 
 
-void checkExtension(); // 查看当前vulkan所支持的拓展
+
+/**
+ *  查看并打印输出当前显卡支持的扩展
+ * */
+void checkExtension(); 
+
+
+/**
+ *  创建 vulkan 实例
+ * */
 void createInstance(); // 创建vulkan实例
 
+
+/**
+ *  销毁 vulkan 实例
+ * */
 void vkInstanceCleanUp(); // 销毁vulkan实例
 
 #endif

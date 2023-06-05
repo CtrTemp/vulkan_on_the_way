@@ -19,6 +19,13 @@
 #include "swapchain.h"
 
 
+/*
+    Beief Introduction：
+    为了使用包括在交换链中的任何的VkImage，在整个渲染管线中，我们需要创建一个VkImageView对象。
+该对象将描述如何访问图像以及要访问图像的哪些部分。例如，如果应该将其视为2D深度纹理，mipmap就不会被使用。
+*/
+
+
 /**
  *  ImageView相关实例的创建
  * */

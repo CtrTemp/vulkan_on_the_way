@@ -18,10 +18,16 @@
 #include "vk_instance.h"
 #include "surface.h"
 
+/**
+ *  图形卡的选取以及核验
+ * */
+void pickPhysicalDevice();
 
-
-extern VkPhysicalDevice physicalDevice;                  // 物理设备对象
-
+/**
+ *  GPU核验评估
+ * */
+bool isDeviceSuitable(VkPhysicalDevice device);
+extern VkPhysicalDevice physicalDevice; // 声明 物理设备对象
 
 /**
  *  验证指标 01 ：
@@ -33,7 +39,7 @@ extern VkPhysicalDevice physicalDevice;                  // 物理设备对象
  *
  *  以下结构体记录所需两个队列具体的index。
  *
- *  在程序中我们将对设备进行验证，使用 findQueueFamilies 函数将具体的信息填充到下面声明的 queueIndices 
+ *  在程序中我们将对设备进行验证，使用 findQueueFamilies 函数将具体的信息填充到下面声明的 queueIndices
  * 全局对象中，以供后面的程序进行验证操作。
  *
  *  当 graphicsFamily 和 presentFamily 都有值时，说明当前图形卡可以找到满足二者的指令集队列至少
@@ -53,37 +59,42 @@ struct QueueFamilyIndices
     }
 };
 
-extern QueueFamilyIndices queueIndices; // 指令集队列集合对象
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+extern QueueFamilyIndices queueIndices; // 声明 指令集队列集合对象
 
+/**
+ * 01：核验GPU是否同时具有支持“图形绘制”和“图形展示”的指令集队列
+ * */
+QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
 /**
  *  验证指标 02 ：
  *
  *  swap chain可以理解为vulkan提供的framebuffer以及对framebuffer的控件的集合。我们将渲染好的图像输入到
  * swap chain中，它将负责对整个流进行控制，并以某种我们设置的方式输出到屏幕空间。
- * 
+ *
  *  可以看到swap chain对于我们当前所要做的这个图形应用来说是不可或缺的。所以我们需要核验它是否被我们当前的物理
  * 设备（GPU Card）所支持。
- * 
+ *
  *  我们将所需的设备扩展定义在如下声明的 deviceExtensions 数组中，使用以下的 checkDeviceExtensionSupport
  * 函数进行验证，若物理设备所支持的扩展可以完全覆盖我们在数组中填充的所有需求（这里我们只需要swap chain），则认为
  * 当前物理设备在扩展支持方面是合格的。
- * 
+ *
  *  这是物理设备合格的必要条件。
  *
  * */
-extern const std::vector<const char *> deviceExtensions; // 必要的设备扩展支持
+extern const std::vector<const char *> deviceExtensions; // 声明 必要的设备扩展支持
+/**
+ *  02：验证GPU对 swap chain 的支持
+ * */
 bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-
 
 /**
  *  验证指标 03 ：
- * 
+ *
  *  物理设备支持swap chain扩展仍然不足以说明其完全可用。仍需要对swap chain所支持的一些细节进行考察：
  *  以下使用 SwapChainSupportDetails 结构体定义的 swapChainDetails 全局对象保存当前物理设备所支持的
  * swap chain的一些细节，该对象在 querySwapChainSupport 函数中得到填充。
- * */ 
+ * */
 
 struct SwapChainSupportDetails
 {
@@ -92,23 +103,10 @@ struct SwapChainSupportDetails
     std::vector<VkPresentModeKHR> presentModes;
 };
 
-extern SwapChainSupportDetails swapChainDetails;         // 支持交换链具体细节对象
-SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-
-
-
+extern SwapChainSupportDetails swapChainDetails; // 声明 支持交换链具体细节对象
 /**
- *  选取可用物理设备中的第一块作为当前设备，并使用 isDeviceSuitable 函数对设备是否能够胜任之后的操作
- * 进行核验，回顾核验指标如下：
- * 
- *  1、具有可以支持“图形绘制指令集”和“图形展示指令集”的队列各一个（两队列可以重合也可以不重合）
- *  2、支持swap chain扩展
- *  3、swap chain扩展具有至少一个可用的界面输出格式（像素、色域）；且具有至少一个可用的输出展示模式（队列输出控流）
- * 
- *  以上几点均满足，则认为该物理设备是“适用的”(suitable)
- * */ 
-void pickPhysicalDevice();
-bool isDeviceSuitable(VkPhysicalDevice device);
-
+ *  03：验证 swap chain 特性是否满足要求
+ * */
+SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
 #endif

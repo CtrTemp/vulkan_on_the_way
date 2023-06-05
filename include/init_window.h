@@ -1,7 +1,6 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
@@ -16,17 +15,24 @@
 #define HEIGHT 600
 
 // 声明全局窗口实例
-extern GLFWwindow *window; 
+extern GLFWwindow *window;
 
-// 用于指示是否发生了窗口size 改变的事件
+// 声明窗口 resize 标志位
 extern bool framebufferResized;
 
-
+/**
+ *  创建窗口实例
+ * */
 void initWindow();
+
+/**
+ *  注销窗口实例
+ * */
 void windowCleanup();
+
+/**
+ *  window resize callback function
+ */
 static void framebufferResizeCallback(GLFWwindow *window, int width, int height);
 
-
-
 #endif
-

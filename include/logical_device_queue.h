@@ -36,8 +36,8 @@ extern VkDevice device; // 逻辑设备，物理设备的映射
 void createLogicalDevice();
 
 /**
- *  销毁逻辑设备实例
- * */ 
+ *  注销逻辑设备实例
+ */
 void logicalDeviceCleanup();
 
 #endif

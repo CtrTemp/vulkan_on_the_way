@@ -21,13 +21,22 @@
 #include "physical_device_queue.h"
 #include "logical_device_queue.h"
 
-extern VkSwapchainKHR swapChain; // 声明交换链对象
 
-/**
- *  交换链swap chain在vulkan中充当着类似于framebuffer以及其控件的作用，这在physcial device创建核验
- * 的过程中已经进行过介绍，在此不再赘述。
- *
- * */
+/*
+    Brief Introduction：
+    由于Vulkan不提供默认的 framebuffer，所以在将结果渲染到屏幕前，我们必须申请创建一个基础设施，这个基础设施将
+在屏幕可视化结果之前，将计算结果放入framebuffer（帧缓冲区），我们称这个“基础设施”为交换链（Swap Chain）。
+    该设施必须被明确创建。它其实是一个队列，队列中存放着已经计算好的结果，这些结果将被依次放入framebuffer，并渲染
+到屏幕空间。
+    这个队列应该怎样工作，一张图片应该在何种条件下被展示到屏幕，这都有赖于我们如何去设置这个Swap Chain。但交换链
+的一般目的是进行帧同步，使得图像的呈现与屏幕的刷新率同步。
+    交换链swap chain在vulkan中充当着类似于framebuffer以及其控件的作用，这在physcial device创建核验的过程中
+已经进行过介绍，在此不再赘述。
+*/
+
+
+
+extern VkSwapchainKHR swapChain; // 声明交换链对象
 
 /**
  *  01：为swap chain选择合适的界面展示格式--像素RGB排列顺序、使用哪种色域
