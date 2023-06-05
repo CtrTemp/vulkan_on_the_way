@@ -25,6 +25,9 @@
 该对象将描述如何访问图像以及要访问图像的哪些部分。例如，如果应该将其视为2D深度纹理，mipmap就不会被使用。
 */
 
+// 每个swap chain中的Image都要对应一个ImageView
+extern std::vector<VkImageView> swapChainImageViews;
+
 
 /**
  *  ImageView相关实例的创建

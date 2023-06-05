@@ -1,5 +1,7 @@
 #include "image_view.h"
 
+// 每个swap chain中的Image都要对应一个ImageView
+std::vector<VkImageView> swapChainImageViews;
 /**
  *  创建 ImageView
  * */

@@ -15,8 +15,6 @@ std::vector<VkImage> swapChainImages;
 // 用于填充swap chain的Image的格式（这个与之前配置的swap chain中的格式保持一致即可）
 VkFormat swapChainImageFormat;
 
-// 每个swap chain中的Image都要对应一个ImageView
-std::vector<VkImageView> swapChainImageViews;
 
 /**
  *  创建 swap chain
