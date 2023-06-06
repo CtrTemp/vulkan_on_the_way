@@ -6,7 +6,7 @@
 
 #define GLM_FORCE_RADIANS
 /*
-    第六步，添加以下这行定义，它将使得vec2也强行占用16Bytes这样虽然空间占用变大，但可以保证在C++中不使用
+    添加以下这行定义，它将使得vec2也强行占用16Bytes这样虽然空间占用变大，但可以保证在C++中不使用
 alignas说明符也可以保证大部分情况下的兼容。在这里你可以尝试去除刚刚的修改，查看是否可以得到正确的结果。
     （不过这里我的好像不奏效）
 
@@ -29,9 +29,7 @@ alignas说明符也可以保证大部分情况下的兼容。在这里你可以�
 #include <optional>
 #include <set>
 
-
 #include "buffers/buffers_operation.h"
-
 
 /*
     Introduction 01：
@@ -53,7 +51,6 @@ alignas说明符也可以保证大部分情况下的兼容。在这里你可以�
 的章节中讨论这些问题。
 */
 
-
 /*
     Introduction 02：
     上一章中的描述符布局描述了可以绑定的描述符类型。在本章中，我们将为每个VkBuffer资源创建一个描述符集，
@@ -63,7 +60,6 @@ alignas说明符也可以保证大部分情况下的兼容。在这里你可以�
 应用于其身上的“描述符”。上一小节中我们已经创建好了这些描述符，那么在本节我们要做的就是将这些定义好的描述符
 对应的操作绑定到对应的“被操作对象”身上，也就是顶点缓冲区/索引缓冲区。
 */
-
 
 /*
     第一步，
@@ -134,7 +130,6 @@ struct UniformBufferObject
     */
 };
 
-
 extern VkDescriptorSetLayout descriptorSetLayout;
 
 extern std::vector<VkBuffer> uniformBuffers;
@@ -144,21 +139,40 @@ extern std::vector<void *> uniformBuffersMapped; // 这个是做什么的？没�
 extern VkDescriptorPool descriptorPool;
 extern std::vector<VkDescriptorSet> descriptorSets;
 
-
+/**
+ *  创建 descriptorSetLayout，作为 draw time 更改MVP变换阵并影响 vertex buffer 的接口
+ * */
 void createDescriptorSetLayout();
+
+/**
+ *  创建 uniform buffer，为存储的 MVP 变换阵分配内存。
+ * */
 void createUniformBuffers();
 
-
+/**
+ *  创建 descriptor pool
+ * */
 void createDescriptorPool();
+
+/**
+ *  创建 descriptor sets
+ * */
 void createDescriptorSets();
 
-
-
+/**
+ * 根据当前帧信息，更新 MVP 变换阵。并将变换阵携带的数据拷贝到预先创建好的GPU内存上。
+ * draw time 运行时函数。
+ * */
 void updateUniformBuffer(uint32_t currentImage);
 
-
+/**
+ *  注销 uniform buffer 并释放其对应的GPU内存
+ * */
 void cleanupUniformBuffer();
 
+/**
+ *  注销 descriptorSetLayout
+ * */
 void cleanupDescriptor();
 
 #endif

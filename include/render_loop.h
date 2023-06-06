@@ -109,45 +109,35 @@ CPU进行等待。
  *
  * */
 
-// extern VkSemaphore imageAvailableSemaphore;
-// extern VkSemaphore renderFinishedSemaphore;
-// extern VkFence inFlightFence;
+extern std::vector<VkSemaphore> imageAvailableSemaphores; // 声明 流程控制信号1：用来指示图像已经从 swapchain 中获取到，准备渲染
+extern std::vector<VkSemaphore> renderFinishedSemaphores; // 声明 流程控制信号2：用来指示图像渲染已经完成并可以进行展示
+extern std::vector<VkFence> inFlightFences;               // 声明 流程控制信号3：用于确保每帧只渲染一次，在渲染完成前阻塞后续的操作
 
-extern std::vector<VkSemaphore> imageAvailableSemaphores;
-extern std::vector<VkSemaphore> renderFinishedSemaphores;
-extern std::vector<VkFence> inFlightFences;
-
-// 用于指示当前帧
-extern uint32_t currentFrame;
-
+extern uint32_t currentFrame; // 声明 当前帧 index
 
 /**
- *  完整的renderloop，在main函数的主循环中执行
+ *  主渲染函数 Render Loop
  * */
 void drawFrame();
 
 /**
- *  初始化渲染循环中的流程控件，分别是
- *
- *  两个用于控制GPU阻塞执行的“信号灯”；
- *  一个用于控制CPU阻塞任务提交的“栅栏”
+ *  配置流程控制组件 semaphores 和 fences
  * */
 void createSyncObjects();
 
 /**
- *  程序退出时，销毁render loop中有关的组件（这里主要是几个流程控制相关的信号器
- * */ 
-void cleanupRenderLoopRelated();
-
-
-/**
- *  窗口大小改变时，销毁原有swapchain相关联的组件
- * */ 
+ *  窗口大小改变时，重建swap chain前销毁原有swapchain相关联的组件
+ * */
 void loopCleanupSwapChain();
 
 /**
+ *  注销流程控制组件 semaphores 和 fences
+ * */
+void cleanupRenderLoopRelated();
+
+/**
  *  窗口大小改变时，重建swapchain
- * */ 
+ * */
 void recreateSwapChain();
 
 #endif

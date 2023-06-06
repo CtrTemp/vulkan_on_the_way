@@ -1,47 +1,33 @@
 #include "uniform_buffer.h"
 
-// 第四步，为成员变量添加新成员，描述符布局相关
-VkDescriptorSetLayout descriptorSetLayout;
+/**
+ * 定义描述符接口，将uniform buffer中mvp变换阵应用到vertex buffer上的接口
+ * */
+VkDescriptorSetLayout descriptorSetLayout;   // 创建 descriptorSetLayout
+VkDescriptorPool descriptorPool;             // 创建 descriptorPool
+std::vector<VkDescriptorSet> descriptorSets; // render loop中每帧图片都要有一个 descriptorSet
 
-/*
-    第七步，配合第六步，添加一些成员变量
-    注意，为什么这里我们以数组的形式添加这些“统一缓冲区”？首先要明确这些缓冲区中提供的是我们对场景
-中的物体进行变换的矩阵。而且我们为了让渲染过程中场景中的物体运动起来，每一帧我们都要更新这些变换阵
-中的具体值。而同一时间在交换链中渲染的图像又不止一帧，所以出于统一/效率考虑，我们必须要在这里以数组
-的形式设置多个“统一缓冲区”，且数量应该与交换链中最大图像数量相一致。这个我们在之后的配置函数中将会
-进行详细配置。
-*/
-std::vector<VkBuffer> uniformBuffers;
-std::vector<VkDeviceMemory> uniformBuffersMemory;
-std::vector<void *> uniformBuffersMapped; // 这个是做什么的？没有看懂
+std::vector<VkBuffer> uniformBuffers;             // render loop 中每一帧图都应该对应一个操作 vertex buffer 的 uniform buffer
+std::vector<VkDeviceMemory> uniformBuffersMemory; // uniform buffer 对应的GPU内存分配
+std::vector<void *> uniformBuffersMapped;         // 这个是做什么的？没有看懂
 
-// 为 descriptorPool 创建一个成员变量用于配置
-VkDescriptorPool descriptorPool;
-// 交换链中的每帧图片都要有一个 descriptorSet
-std::vector<VkDescriptorSet> descriptorSets;
-
-/*
-    第三步，创建管道描述符布局相关的信息
-*/
+/**
+ *  descriptorSetLayout 作为运行时接口，在 draw time 更改变换阵并应用到 graphic pipeline 中。
+ * */
 void createDescriptorSetLayout()
 {
 
     VkDescriptorSetLayoutBinding uboLayoutBinding{};
     uboLayoutBinding.binding = 0;
-    // descriptorType字段：刚刚提到，是一个“统一缓冲区”类型，此处的设置与之对应
     uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    // 我们只创建一个描述符
     uboLayoutBinding.descriptorCount = 1;
-    // stageFlags字段描述我们在着色器的哪个阶段引用这个描述符（以下表示我们在顶点着色器阶段引入）
-    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-    // pImmutableSamplers字段与图像采样相关，这里不进行过多描述，也默认不进行配置
-    uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
+    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT; // 在顶点着色器阶段引入描述符
+    uboLayoutBinding.pImmutableSamplers = nullptr;
 
-    // 第四步，配置结构体以及真正创建描述符布局对象
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.bindingCount = 1;
-    layoutInfo.pBindings = &uboLayoutBinding; // 刚刚设置的绑定信息
+    layoutInfo.pBindings = &uboLayoutBinding;
 
     if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS)
     {
@@ -49,11 +35,13 @@ void createDescriptorSetLayout()
     }
 }
 
-// 第六步
+/**
+ *  创建 uniform buffer，其中存储的应该是 MVP 变换阵，应用于 vertex buffer 的变换矩阵。当前 RenderLoop 中的
+ * 容许的最大image数量，每个image都应该配备一个 uniform buffer（与 command buffer 等同）
+ * */
 void createUniformBuffers()
 {
     VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-    // 重置数组大小，与预设当前交换链中最大图片数量相一致
     uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
     uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
     uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
@@ -63,6 +51,13 @@ void createUniformBuffers()
     为其再在GPU上开辟显存。这是由于每次/帧我们都要对图像的mvp变换阵进行更新，并应用，如果再多一个“阶段
     缓冲区”到真正“统一缓冲区”的映射将拉低运行效率。
     */
+
+    /**
+     *  逐个创建uniform buffer：
+     *  1、注意这里将uniform直接创建在了CPU可访问的内存上，并将其映射到uniformBuffersMapped，没有使用staging buffer
+     * 作二次映射以及device to device的数据拷贝。
+     *  2、注意这里只进行了映射，却没有急着进行数据拷贝，因为真正要拷贝的数据是mvp变换阵，需要等到运行时才能确定。
+     * */
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         createBuffer(bufferSize,
@@ -75,10 +70,10 @@ void createUniformBuffers()
     }
 }
 
-/*
-    第八步，创建更新mvp变换阵的函数，该函数将在每一帧进行调用，使得mvp变换阵随着“统一缓冲区”的变换而更新。
-应用新的变换阵之后，显示的图像会随着进行位移/旋转等变换。输入的单数是当前帧。
-*/
+/**
+ * 根据当前帧信息，更新 MVP 变换阵。并将变换阵携带的数据拷贝到预先创建好的GPU内存上。
+ * draw time 运行时函数。
+ * */
 void updateUniformBuffer(uint32_t currentImage)
 {
 
@@ -116,39 +111,27 @@ void updateUniformBuffer(uint32_t currentImage)
     ubo.proj[1][1] *= -1;
 
     /*
-        因为没有“阶段缓冲区”，这里省略掉一步映射，可以直接将数据拷贝到开辟好的CPU可访问的内存地址，如下：
+        因为没有使用staging buffer，这里省略掉一步映射，可以直接将数据拷贝到开辟好的CPU可访问的GPU内存地址，如下：
     */
     memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 }
 
-/*
-    第一步，创建描述符池（descriptor pool）
-    描述符集（descriptor sets）并不能被直接创建，它们应该被从描述符池（descriptor pool）中
-被分配得到。这个模式与之前学习中提到的命令池（Command pool）与创建命令缓冲区（Command Buffer）
-中的对应关系十分类似。
-    以下我们就将编写一个“描述符池”来设置它
-*/
+/**
+ *  创建descriptor pool
+ *  描述符集（descriptor sets）并不能被直接创建，它们应该被从描述符池（descriptor pool）中被分配得到。这个模式与
+ * 之前提到的命令池（Command pool）与创建命令缓冲区（Command Buffer）中的对应关系十分类似。
+ * */
 void createDescriptorPool()
 {
     VkDescriptorPoolSize poolSize{};
-    // type 字段指定池类型，这里对应前一个小节使用的“统一缓冲区”
     poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    /*
-        descriptorCount 字段指定我们要一次性创建多少个池，由于我们将为在交换链中的每帧图像都预
-    置一个池，所以按照 MAX_FRAMES_IN_FLIGHT 字段给出的值来确定创建数量
-    */
     poolSize.descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
-    // 对应创建信息
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
     poolInfo.poolSizeCount = 1;
     poolInfo.pPoolSizes = &poolSize;
-    /*
-        类似于 descriptorCount 字段用于指示要创建的池的数量多少，maxSets 字段用来指示我们要为
-    最多多少个池分配内存
-    */
-    poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+    poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT); // 最大 descriptor sets 数量
 
     if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
     {
@@ -156,10 +139,9 @@ void createDescriptorPool()
     }
 }
 
-/*
-    第二步，创建描述符集（descriptor sets）
-    如同第一步所讲，描述符集是我们真正要使用的部分，它将从描述符池（descriptor pool）中分配得来。
-*/
+/**
+ *  创建描述符集（descriptor sets）
+ * */
 void createDescriptorSets()
 {
     std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
@@ -177,7 +159,7 @@ void createDescriptorSets()
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
 
-    // 设置循环，为每个描述符集配置信息
+    // 为每个描述符集配置信息
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         VkDescriptorBufferInfo bufferInfo{};
@@ -185,32 +167,26 @@ void createDescriptorSets()
         bufferInfo.offset = 0;
         bufferInfo.range = sizeof(UniformBufferObject);
 
-        /*
-            如果想要重写/覆盖整个缓冲区？？？
-            就像我们在本例中一样，那么也可以使用VK_whole_SIZE值作为范围。使用vkUpdateDescriptorSet
-        函数更新描述符的配置，该函数将VkWriteDescriptorSet结构数组作为参数。（直译，这里没看懂）
-        */
         VkWriteDescriptorSet descriptorWrite{};
         descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrite.dstSet = descriptorSets[i];
         descriptorWrite.dstBinding = 0;
         descriptorWrite.dstArrayElement = 0;
-        // 没理解
         descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         descriptorWrite.descriptorCount = 1;
-        // 没理解
         descriptorWrite.pBufferInfo = &bufferInfo;
         descriptorWrite.pImageInfo = nullptr;       // Optional
         descriptorWrite.pTexelBufferView = nullptr; // Optional
 
-        // 没理解，以上这部分回来要重看
         vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
     }
 }
 
+/**
+ *  注销 uniform buffer 并释放其对应的GPU内存
+ * */
 void cleanupUniformBuffer()
 {
-    // 逐一销毁/释放“统一缓冲区”
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
         vkDestroyBuffer(device, uniformBuffers[i], nullptr);
@@ -218,8 +194,11 @@ void cleanupUniformBuffer()
     }
 }
 
+/**
+ *  注销 descriptorSetLayout
+ *  descriptorSetLayout 注销后 descriptorPool和descriptorSet也会被自动注销
+ * */
 void cleanupDescriptor()
 {
-    // 销毁描述符相关的成员变量
     vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 }
