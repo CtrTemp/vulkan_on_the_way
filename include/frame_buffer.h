@@ -27,21 +27,16 @@ depth属性，size大小适应swapchain中的image等等，但目前为止我们
     在当前章节，我们需要做的第一步就是对Framebuffer进行创建。
 */
 
-/*
-    第一步，首先将要创建的 Framebuffer 添加入成员变量，注意到，因为我们的Framebuffer要与交换链
-中的图像一一对应，故要为其中的每一张图像都创建一个Framebuffer，所以这里要使用一个数组来承接。
-*/
-extern std::vector<VkFramebuffer> swapChainFramebuffers;
-
+extern std::vector<VkFramebuffer> swapChainFramebuffers; // 声明交换链中的framebuffers
 
 /**
  *  为交换链中的每一个 Image View 都要创建一个 framebuffer
- * */ 
+ * */
 void createFramebuffers();
 
 /**
  *  销毁 framebuffer
- * */ 
+ * */
 void cleanupFramebuffer();
 
 #endif

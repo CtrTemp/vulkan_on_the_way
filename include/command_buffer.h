@@ -32,10 +32,9 @@
     这时你之前所配置的指令集队列就派上用场了？
 */
 
-extern VkCommandPool commandPool;
+extern VkCommandPool commandPool; // 声明 命令池实例，用于管理命令缓冲区的内容
 
-// extern VkCommandBuffer commandBuffer;
-extern std::vector<VkCommandBuffer> commandBuffers;
+extern std::vector<VkCommandBuffer> commandBuffers; // 声明 命令缓冲区实例
 
 /**
  *  创建命令池

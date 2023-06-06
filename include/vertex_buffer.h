@@ -23,11 +23,9 @@
 
 // #include "physical_device_queue.h"
 // #include "logical_device_queue.h"
-
 // #include "command_buffer.h"
 
 #include "buffers/buffers_operation.h"
-
 
 /*
     Introduction 01：
@@ -46,7 +44,6 @@
 
     下一个章节中，我们将使用另一个方法来将顶点数据导入到顶点缓冲区中，性能会提高，但需要更多的工作要做。
 */
-
 
 /*
     Introduction 03：
@@ -88,14 +85,13 @@ VK_QUEUE_TRANSFER_BIT 指示位。但现在很好的一点是，目前我们已�
 进行复用。具体我们还是进入代码看例子吧。
 */
 
-
-/*
-    第一步：使用GLM库创建顶点类型结构体，当前的结构体应至少包含顶点颜色和位置两个基本属性。
-*/
+/**
+ * vertex 结构体
+ * */
 struct Vertex
 {
-    glm::vec2 pos;
-    glm::vec3 color;
+    glm::vec2 pos;   // 顶点位置坐标
+    glm::vec3 color; // 顶点颜色
 
     /*
         第二步：告诉Vulkan如何将当前格式的数据上传到GPU显存上，并保证其可以正确传递到顶点着色器。这应该通过
@@ -161,24 +157,32 @@ struct Vertex
     }
 };
 
-// 借助定义的vertex结构体，预先定义一个三角形顶点序列，其中的数据与原先在.vert文件中的定义完全相同
-extern const std::vector<Vertex> vertices;
+extern const std::vector<Vertex> vertices; // 声明 存储在CPU内存上的“顶点”源数据
+extern VkBuffer vertexBuffer;              // 声明 vertex buffer 实例
+extern VkDeviceMemory vertexBufferMemory;  // 声明 vertex buffer 对应在 GPU device 上的内存
 
-// 添加 Vertex buffer 对应的成员变量。
-extern VkBuffer vertexBuffer;
+extern const std::vector<uint16_t> indices; // 声明 存储在CPU内存上的“顶点索引”源数据
+extern VkBuffer indexBuffer;                // 声明 index buffer 实例
+extern VkDeviceMemory indexBufferMemory;    // 声明 index buffer 对应在 GPU device 上的内存
 
-// GPU 上的内存创建相关的成员变量
-extern VkDeviceMemory vertexBufferMemory;
-
-
-extern const std::vector<uint16_t> indices;
-extern VkBuffer indexBuffer;
-extern VkDeviceMemory indexBufferMemory;
-
+/**
+ *  GPU上创建 Vertex Buffer，并导入顶点数据
+ * */
 void createVertexBuffer();
 
+/**
+ *  GPU上创建 Index Buffer，并导入顶点索引数据
+ * */
 void createIndexBuffer();
 
+/**
+ * 注销 Vertex Buffer，释放其对应的内存
+ * */
 void cleanupVertexBuffer();
+
+/**
+ * 注销 Index Buffer，释放其对应的内存
+ * */
+void cleanupIndexBuffer();
 
 #endif

@@ -1,125 +1,48 @@
 #include "render_passes.h"
 
-VkRenderPass renderPass;
 
-// 创建 Render Pass
+VkRenderPass renderPass;  // render pass 实例
+
+/**
+ *  创建 Render Pass
+*/
 void createRenderPass()
 {
-    /*
-        第一步，Attachment description 附件说明
-    */
-    // 在我们的例子中，我们只有一个由交换链中的一个图像表示的单色缓冲区附件。（可能意思就是不需要全局配置）
+    // 配置 frame buffer 颜色附件
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = swapChainImageFormat;
-    // 由于我们还没有开启多重采样（抗锯齿），故这里我们仅进行单采样
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    /*
-        loadOp和storeOp决定在渲染之前和渲染之后如何处理附件中的数据。这些配置将会被应用在framebuffer中
-    的depth数据项和color数据项中。
 
-        关于 loadOp 字段：它表示渲染一张新的图片之前，framebuffer应该是一个怎样的状态；
-        VK_ATTACHMENT_LOAD_OP_LOAD： framebuffer 中现有内容（应该是上一帧的内容）将会被保留；
-        VK_ATTACHMENT_LOAD_OP_CLEAR：在开始呈现下一张图像前， framebuffer 现有值将会被清除为常量
-    （但这个常量值是什么呢？下面的描述说明说将会被置为“黑色”，那么这个常量值应该就是0）；
-        VK_ATTACHMENT_LOAD_OP_DONT_CARE： framebuffer 中的值会被置为一个“未定义”的状态（不确定状
-    态，并且我们也不在乎其中的值）
-    */
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR; // 其实就是清零，置为常数0，代表黑色
-    /*
-        关于 storeOp 字段：它表示在渲染一张图片之后，framebuffer应该会被置为什么状态；
-        VK_ATTACHMENT_STORE_OP_STORE： framebuffer 中的内容将存储在内存中，稍后可以读取
-        VK_ATTACHMENT_STORE_OP_DONT_CARE： framebuffer 中的内容将被置为一个“未定义”状态
-    */
-    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE; // 存储下来
-    /*
-        上面提到，loadOp和storeOp这两个字段的配置是应用在framebuffer中的depth和color数据上的，而对于
-    stencil（模板）数据项，我们使用stencilLoadOp / stencilStoreOp字段来进行配置（其中枚举值含义相同）
-        因为我们现在完全没有启用 stencil buffer（可以参见上一个章节对应部分），所以以下可以暂时设置为“未
-    定义”的状态。
-        这里等到depth buffer部分后再来填写注释
-    */
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+
     colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    /*
-        在Vulkan中，Textures和Framebuffers由具有特定像素格式的VkImage对象表示，但内存中的像素布局可能
-    会根据您尝试对图像进行的操作而改变（直译）。
-        根据我的理解，它可能向说明的是：目前在Framebuffer中已经有图像了，但下一步Framebuffer中的图像将
-    被用作什么处理，交付给哪一个组件（可能是直接进行展示，也可能有其他操作），这些将要进行的操作需要给入特定
-    “格式”的数据，也就是我们这里说的pixel存储的layout。所以在这个部分，我们为了提高程序运行效率，应该预先
-    设置好输出的“格式”。
-        可选的像素布局根据下一步操作的不同，分为了如下几种：
-        VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL：用作颜色附件的图像
-        VK_IMAGE_LAYOUT_PRESENT_SRC_KHR：要在交换链中显示的图像（这个应该就是直接用来展示的那种设置）
-        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL：要用作内存复制操作目标的图像
 
-        其中 initialLayout 字段指示渲染过程（Render Pass）开始之前的图像布局。 这个字段我们使用
-    VK_IMAGE_LAYOUT_UNDEFINED 表示我们并不关心图像在之前的布局是什么样子。但值得注意的是，图像的内容并不
-    能保证被保存，但这也无关紧要了，因为在我们当前的这个教程中，图像渲染之后都要被清除掉。
-        finalLayout 字段指示的是渲染过程（Render Pass）完成之后，图像自动转换到的布局。在这里我们使用
-    VK_IMAGE_LAYOUT_PRESENT_SRC_KHR 进行设置，表示我们希望图像在渲染之后可以使用交换链进行直接显示。
-    */
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;     // 最开始的“格式”（we don't care~）
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR; // 最终要输出的“格式”（要输出展示）
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-    /*
-        第二步，Subpasses and attachment reference 子过程和附件参考
-        首先明确“子过程”Subpass是什么？子过程就是渲染之后的分支操作，其中我们最先能想到的就是直接呈现到屏幕
-    进行展示，当然，这是一种最基本的“子过程”。其他可能还会有更多的子过程以及适配的操作，在此我们不提及。
-        注意到，每一个子过程都需要一些组件/附件（Attachment）进行支持。下面我们针对“直接向页面进行呈现”这
-    一子过程配置其需要的附件。
-    */
+    // 配置子过程附件
     VkAttachmentReference colorAttachmentRef{};
     colorAttachmentRef.attachment = 0;
-    // 针对刚刚上一个步骤中配置的输出的“像素布局”这里作为其下一个步骤就应用到了，并为其布局配置为最优性能
-    // colorAttachmentRef.layout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    // 为啥这里不是  VK_IMAGE_LAYOUT_PRESENT_SRC_KHR？？？按理说应该与以上的配置保持一致
-    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL; 
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    // 配置子过程
     VkSubpassDescription subpass{};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    // 以下是颜色附件的引用，因为我们只需要一个子过程，就是窗口显示渲染结果，那么下面的count配置为1
     subpass.colorAttachmentCount = 1;
-    subpass.pColorAttachments = &colorAttachmentRef; // 这里为创建的子过程引入刚刚配置的附件
-                                                     /*
-                                                         注意这里配置的字段是 pColorAttachments，然而除了这种类型的组件，还可以引入其他类型的附件，如下，
-                                                     可配置的附件字段还有：（具体的细节之后遇到需求再进行讨论）
-                                                         pInputAttachments:从着色器读取的附件
-                                                         pResolveAttachments：用于多采样颜色附件的附件
-                                                         pDepthStencil附件：深度和模具数据的附件
-                                                         pPreserveAttachments：此子过程未使用但必须保留其数据的附件
-                                                     */
+    subpass.pColorAttachments = &colorAttachmentRef;
 
-    /*
-             第十步，子过程（Subpass）依赖配置（注意，这里第一次看没有太搞明白）
-             （翻译直译）请记住，渲染过程中的子过程会自动处理图像布局过渡。这些转换由子通道依赖项控制，子通道依赖
-         关系指定子通道之间的内存和执行依赖项。我们现在只有一个子通路，但是在这个子通路之前和之后的操作也算作隐式
-         的“子通路”。
-
-             之前提到像素布局会因子过程的不同而不同，从而提高效率，而布局的转换过程会在渲染过程开始和结束时自动转
-         换，可能这里说的就是这个。
-
-             但目前我们无法保证这种转换发生在正确的时候，因为我们在设置subpass的时候图像还没有被引入。以下配置来
-         解决这个问题。以下提供两种解决方法：
-             1/我们可以将imageAvailableSemaphore的waitStages更改为 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT，
-         以确保渲染过程在图像可用之前不会开始；
-             2/可以使渲染过程等待 VK_PIPE LINE_STAAGE_COLOR_ATTACHMENT_OUTPUTT_BIT 阶段
-             在这里我们选择第二种方式，从而让整个流程看起来更符合程序实际运行中的过程。
-         */
+    // 配置子过程依赖
     VkSubpassDependency dependency{};
-    // 前两个字段指定依赖项以及依赖索引，这里只有一个subpass，所以置为0
-    // 注意 dstSubpass 字段的值一定要高于 srcSubpass
     dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
     dependency.dstSubpass = 0;
-    // srcStageMask 指定要等待的操作以及这些操作发生的阶段，需要等待交换链读取完图像之后才能访问它
     dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     dependency.srcAccessMask = 0;
 
-    // dstStageMask 指定要？？？从这以后就完全看不懂了
     dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-    /*
-        第三步，Render Pass 的创建
-    */
     VkRenderPassCreateInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.attachmentCount = 1;
@@ -133,6 +56,10 @@ void createRenderPass()
     }
 }
 
+
+/**
+ *  注销 Render Pass
+*/
 void cleanupRenderPass()
 {
     vkDestroyRenderPass(device, renderPass, nullptr);

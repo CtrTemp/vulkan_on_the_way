@@ -76,10 +76,17 @@ extern const int MAX_FRAMES_IN_FLIGHT;
 */
 
 
-extern VkPipelineLayout pipelineLayout; 
-extern VkPipeline graphicsPipeline;
+extern VkPipelineLayout pipelineLayout; // 声明运行时对管线进行修改/参数传入的接口实例
+extern VkPipeline graphicsPipeline; // 声明渲染管线实例
 
+/**
+ *  创建图形渲染管线
+ * */
 void createGraphicsPipeline();
+
+/**
+ *  销毁图形渲染管线
+ * */
 void cleanupGraphicPipeline();
 
 

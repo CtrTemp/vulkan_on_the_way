@@ -43,8 +43,8 @@ void initVulkan()
 
     createDescriptorPool(); // 创建描述符池
     createDescriptorSets(); // 创建描述符集合
-    
-    createCommandBuffer();  // 创建命令缓冲区
+
+    createCommandBuffer(); // 创建命令缓冲区
 
     createSyncObjects(); // 创建绘制循环中的流控制原语
 }
@@ -63,6 +63,8 @@ void cleanupVulkan()
     cleanupUniformBuffer();
 
     cleanupDescriptor();
+
+    cleanupIndexBuffer();
 
     cleanupVertexBuffer();
 

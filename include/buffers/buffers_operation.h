@@ -32,12 +32,21 @@
 
 
 
+/**
+ *  在device上创建一个特定功用的buffer，并为其分配合适类型的内存空间
+ * */
 void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory);
 
 
+/**
+ *  GPU上的buffer数据拷贝（device to device）
+ * */
 void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
 
+/**
+ *  找出当前buffer最合适的分配内存类型
+ * */
 uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
 
