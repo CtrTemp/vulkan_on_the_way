@@ -69,9 +69,16 @@ bool isDeviceSuitable(VkPhysicalDevice device)
         swapChainDetails = querySwapChainSupport(device);
         swapChainAdequate = !swapChainDetails.formats.empty() && !swapChainDetails.presentModes.empty();
     }
+    /**
+     *  04：即使在现代图形显卡中很难找到不支持“各项异性采样”的，我们还是决定进行以下的验证保证程序能够
+     * 正确运行，且在无法运行时给出正确报错。
+     * */
+    VkPhysicalDeviceFeatures supportedFeatures;
+    vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
 
     // 以上核验均通过则认定GPU设备合格
-    return queueIndices.isComplete() && extensionsSupported && swapChainAdequate;
+    return queueIndices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
+    // return queueIndices.isComplete() && extensionsSupported && swapChainAdequate;
 }
 
 /**
@@ -89,7 +96,6 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
 
     std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
-
 
     std::cout << "available devices' cmd queue family: \n"
               << "queue family count = " << queueFamilyCount << " <> " << queueFamilies.size() << std::endl;
@@ -109,7 +115,6 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
             indices.graphicsFamily = i; // 然后让 indices 指向这个队列
         }
 
-
         // 找到一个支持图形展示指令集的队列（支持图形绘制指令集的队列不一定支持图形展示指令，但二者也有可能重合）
         VkBool32 presentSupport = false;
         vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
@@ -128,10 +133,9 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device)
     return indices;
 }
 
-
 /**
  *  02：验证GPU对 swap chain 的支持
- * */ 
+ * */
 bool checkDeviceExtensionSupport(VkPhysicalDevice device)
 {
     // 扩展数量
@@ -153,13 +157,12 @@ bool checkDeviceExtensionSupport(VkPhysicalDevice device)
     return requiredExtensions.empty();
 }
 
-
 /**
  *  03：验证 swap chain 特性是否满足要求
  *  1、swap chain 的基本界面能力，如：swap-chain能最多/最少能容纳的图片数量，swap-chain能够接受的最大图像宽度/高度
  *  2、swap chain 支持的基本界面格式，如：像素类型，色域
  *  3、swap chain 可用的输出展示模式
- * */ 
+ * */
 SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device)
 {
     SwapChainSupportDetails details;

@@ -35,6 +35,12 @@ void initVulkan()
 
     createCommandPool(); // 创建命令池
 
+    createTextureImage(); // 创建纹理贴图
+
+    createTextureImageView(); // 为纹理图创建ImageView
+
+    createTextureSampler(); // 创建纹理采样器
+
     createVertexBuffer(); // 创建顶点缓冲区
 
     createIndexBuffer(); // 创建索引缓冲区
@@ -55,6 +61,8 @@ void initVulkan()
 void cleanupVulkan()
 {
     cleanupSwapChain();
+
+    cleanupTextureRelated();
 
     cleanupGraphicPipeline();
 

@@ -29,8 +29,13 @@ void createLogicalDevice()
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
-    // 定义一组设备功能（不过目前我们还不需要对其进行配置，先对其留空）
+    // 定义一组设备功能
     VkPhysicalDeviceFeatures deviceFeatures{};
+    /**
+     *  当要在 anisotropyEnable() 函数中开启 anisotropyEnable 时，还要记得在以下硬件设备进行开启使能
+     * （该功能在texture related部分添加，要用到纹理贴图的采样）
+     * */
+    deviceFeatures.samplerAnisotropy = VK_TRUE;
 
     // 开始创建逻辑设备
     VkDeviceCreateInfo createInfo{};

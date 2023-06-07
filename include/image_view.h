@@ -17,7 +17,7 @@
 
 #include "logical_device_queue.h"
 #include "swapchain.h"
-
+#include "buffers/buffers_operation.h"
 
 /*
     Beief Introduction：
@@ -28,11 +28,27 @@
 // 每个swap chain中的Image都要对应一个ImageView
 extern std::vector<VkImageView> swapChainImageViews;
 
-
 /**
  *  ImageView相关实例的创建
  * */
 void createImageViews();
+
+/**
+ *  创建单一图像实例
+ * */
+void createImage(uint32_t width,
+                 uint32_t height,
+                 VkFormat format,
+                 VkImageTiling tiling,
+                 VkImageUsageFlags usage,
+                 VkMemoryPropertyFlags properties,
+                 VkImage &image,
+                 VkDeviceMemory &imageMemory);
+
+/**
+ *  创建单一ImageView实例
+ * */
+VkImageView createImageView(VkImage image, VkFormat format);
 
 /**
  *  ImageView相关实例的销毁

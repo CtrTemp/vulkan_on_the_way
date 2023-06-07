@@ -1,6 +1,5 @@
 #include "command_buffer.h"
 
-
 VkCommandPool commandPool; // 命令池实例，用于管理命令缓冲区的内容
 
 std::vector<VkCommandBuffer> commandBuffers; // 命令缓冲区实例
@@ -152,7 +151,6 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uin
      */
     vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 
-
     /**
      * 填充指令9：结束RenderPass
      */
@@ -163,6 +161,47 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uin
     {
         throw std::runtime_error("failed to record command buffer!");
     }
+}
+
+/**
+ *  创建一个用于提交单次指令的 command buffer
+ * */
+VkCommandBuffer beginSingleTimeCommands()
+{
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandPool = commandPool;
+    allocInfo.commandBufferCount = 1;
+
+    VkCommandBuffer commandBuffer;
+    vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+    vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+    return commandBuffer;
+}
+
+/**
+ *  结束一个 用于提交单次指令的 command buffer 的填充，并将其送入 graphic queue 进行执行
+ * */
+void endSingleTimeCommands(VkCommandBuffer commandBuffer)
+{
+    vkEndCommandBuffer(commandBuffer);
+
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffer;
+
+    vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+    vkQueueWaitIdle(graphicsQueue);
+
+    vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
 void cleanupCommandPool()

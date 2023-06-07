@@ -21,7 +21,7 @@ void configure_vertex_input(VkPipelineVertexInputStateCreateInfo &vertexInputInf
         将刚刚配置的结构体通过执行内置成员函数的方式引入
     */
     static VkVertexInputBindingDescription bindingDescription = Vertex::getBindingDescription();
-    static std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions = Vertex::getAttributeDescriptions();
+    static std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = Vertex::getAttributeDescriptions();
 
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     // vertexInputInfo.vertexBindingDescriptionCount = 0;

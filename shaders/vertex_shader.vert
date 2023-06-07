@@ -12,16 +12,27 @@
 文件中硬编码进去的（至少当作一个占位符存在）
 */ 
 layout(binding = 0) uniform UniformBufferObject {
-    vec2 foo;
+    // vec2 foo;
     mat4 model;
     mat4 view;
     mat4 proj;
 } ubo;
 
-layout(location = 0) in vec2 inPosition;
-layout(location = 1) in vec3 inColor;
 
-layout(location = 0) out vec3 fragColor;
+
+/*
+    第六步，修改fragment shader从而使其可以直接从纹理进行采样
+*/ 
+
+// 这里对应的就是C++中写的 verteies
+layout(location = 0) in vec2 inPosition;    // 实际坐标
+layout(location = 1) in vec3 inColor;       // 实际顶点颜色
+layout(location = 2) in vec2 inTexCoord;    // 顶点对应UV坐标（这是新添加的）
+
+layout(location = 0) out vec3 fragColor;    // 着色器输出颜色
+layout(location = 1) out vec2 fragTexCoord; // 片段对应的纹理坐标（这是新添加的）
+
+
 
 /*
     在 vertex shader 中，每个顶点都会调用一次main()函数！这是在GPU中内置并行的部分。
@@ -33,9 +44,8 @@ layout(location = 0) out vec3 fragColor;
 */ 
 
 void main() {
-    // gl_Position = vec4(inPosition, 0.0, 1.0);
-
-    // 对当前矩阵应用 MVP 变换阵（其实就是连续乘这几个矩阵就好）
+    // gl_Position 是默认变量，输出到vertex shader，以下这里应用了mvp变换
     gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 0.0, 1.0);
     fragColor = inColor;
+    fragTexCoord = inTexCoord; // 同样，我们将UV值也传给后面的fragment shader
 }

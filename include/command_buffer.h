@@ -47,6 +47,19 @@ void createCommandPool();
 void createCommandBuffer();
 void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uint32_t currentFrame);
 
+
+
+/**
+ *  创建一个用于提交单次指令的 command buffer
+ * */
+VkCommandBuffer beginSingleTimeCommands();
+
+/**
+ *  结束一个 用于提交单次指令的 command buffer 的填充，并将其送入 graphic queue 进行执行
+ * */
+void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+
+
 void cleanupCommandPool();
 
 #endif

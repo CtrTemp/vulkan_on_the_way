@@ -90,8 +90,9 @@ VK_QUEUE_TRANSFER_BIT 指示位。但现在很好的一点是，目前我们已�
  * */
 struct Vertex
 {
-    glm::vec2 pos;   // 顶点位置坐标
-    glm::vec3 color; // 顶点颜色
+    glm::vec2 pos;      // 顶点位置坐标
+    glm::vec3 color;    // 顶点颜色
+    glm::vec2 texCoord; // 添加UV贴图对应的二维纹理
 
     /*
         第二步：告诉Vulkan如何将当前格式的数据上传到GPU显存上，并保证其可以正确传递到顶点着色器。这应该通过
@@ -103,55 +104,32 @@ struct Vertex
         VkVertexInputBindingDescription bindingDescription{};
 
         bindingDescription.binding = 0;
-        // stride 字段用来描述顶点之间的存储字节间隔，这里我们连续传递，所以间隔就恰好等于结构体大小
         bindingDescription.stride = sizeof(Vertex);
-        /*
-            inputRate 用于描述以上 stride 对应移动对象是什么？
-            VK_VERTEX_INPUT_RATE_VERTEX：表示每次逐顶点进行移动读取
-            VK_VERTEX_INPUT_RATE_INSTANCE：表示每次逐实例进行移动读取
-            （我们这里还不涉及实例化渲染，所以使用前者）
-        */
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
         return bindingDescription;
     }
 
-    /*
-        第三步：添加另一个用于描述如何处理输入顶点数据的函数，同样要返回一个对应的结构体，如下：
-    */
-    static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions()
+    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
     {
-        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
-        attributeDescriptions[0].binding = 0; // 指明？？？这个没理解
-        /*
-            tutorial：The binding parameter tells Vulkan from which binding the per-vertex data comes.
-            直译：binding参数告诉Vulkan每个顶点数据来自哪个绑定。
-        */
-        attributeDescriptions[0].location = 0; // 指明在当前结构体中的位置索引
-        /*
-            format 字段有以下可选项：
-            VK_FORMAT_R32_SFLOAT：对应float类型
-            VK_FORMAT_R32G32_SFLOAT：对应vec2类型，内部数值单元是float类型
-            VK_FORMAT_R32G32B32_SFLOAT：对应vec3类型，内部数值单元是float类型
-            VK_FORMAT_R32G32B32A32_SFLOAT：对应vec4类型，内部数值单元是float类型
-
-            format 字段定义值应该与vertex shader中对应值的位宽/维度相一致，这里允许此处定义值的维度超出
-        vertex shader中的维度，且这种情况下多出的维度会被默认弃用！当这里定义的维度小于vertex shader中
-        对应值的时候，则BGA组件将使用默认值（0,0,1）（这里啥意思没看懂，，，）
-            注意下标索引，这里的索引是0,对应的是pos的vec2,故选用 VK_FORMAT_R32G32_SFLOAT 进行配置
-        */
+        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
+        // pos vec2
+        attributeDescriptions[0].binding = 0;
+        attributeDescriptions[0].location = 0;
         attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-        /*
-            offset 字段：指定当前属性与结构体开头的位置相差多少个字节，这里我们借助标准库中的offsetof()
-        运算符进行计算。（或者对于当前属性 pos 直接写0就可以，因为它是本结构体的首个属性）
-        */
         attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
-        // 同样的，以下对color属性进行设置，其对应的索引为1
+        // color vec3
         attributeDescriptions[1].binding = 0;
-        attributeDescriptions[1].location = 1;                        // location +1
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT; // 对应vec3
+        attributeDescriptions[1].location = 1;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[1].offset = offsetof(Vertex, color);
+
+        // texCoord vec2
+        attributeDescriptions[2].binding = 0;
+        attributeDescriptions[2].location = 2;
+        attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
 
         return attributeDescriptions;
     }

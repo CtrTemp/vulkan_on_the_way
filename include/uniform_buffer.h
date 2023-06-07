@@ -5,14 +5,6 @@
 #include <GLFW/glfw3.h>
 
 #define GLM_FORCE_RADIANS
-/*
-    添加以下这行定义，它将使得vec2也强行占用16Bytes这样虽然空间占用变大，但可以保证在C++中不使用
-alignas说明符也可以保证大部分情况下的兼容。在这里你可以尝试去除刚刚的修改，查看是否可以得到正确的结果。
-    （不过这里我的好像不奏效）
-
-    但请注意，另一些情况下该方法仍然会失效，比如使用嵌套结构定义的结构体类型（在此不过多探讨，，，）
-*/
-#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -29,6 +21,7 @@ alignas说明符也可以保证大部分情况下的兼容。在这里你可以�
 #include <optional>
 #include <set>
 
+#include "texture.h"
 #include "buffers/buffers_operation.h"
 
 /*
@@ -79,55 +72,9 @@ alignas说明符也可以保证大部分情况下的兼容。在这里你可以�
 
 struct UniformBufferObject
 {
-    glm::vec2 foo;
-    /*
-        第五步，如果我们尝试添加以上的 foo 成员变量，并且在vertex shader中也添加相同的成员，
-    我们会发现，编译后运行程序，无法得到之前在屏幕中央旋转的四边形。
-        这就引出了一个问题，我们之前只是按照程序要求去写了，但是并没有去思考C++中定义的这个结构
-    体是如何与vertex shader中的变量去一一对应的。目前我们添加了这个成员，并且在着色器文件中也
-    是在首位添加相同类型的成员，但对应关系却错乱了，导致我们无法成功渲染出想要的结果。这就表明实
-    际上二者对应关系并不是这样按照顺序默认对应，应该会有某种限制来进行约束。
-        这引出了下一个我们要讨论的重点：数据对齐！
-        Vulkan中的数据对齐方案如下：
-        标量数据：占有4Bytes，并且必须按照每4字节为最小单位进行对齐，也就是offset必须为4Bytes
-    的倍数（4Bytes=32bits floats）
-        vec2：占有8Bytes，对齐所需8Bytes的倍数
-        vec3/vec4：16Bytes，对齐所需16Bytes的倍数
-        结构体（含有嵌套关系的数据）：这个比较特殊，它的最小对齐单位应该是其内部成员基础对齐单位
-    之和的倍数，这个倍数不足16的按照16来计算
-        mat4：相当于一个方阵，由4个vec4拼接而成故为 4×16Bytes = 64Bytes；占有64Bytes，对齐
-    所需必须是16Bytes的倍数
-
-        注意，以上说的都针对在 C++ 中的定义
-
-        那么针对当前这个 UniformBufferObject 中的成员：
-        由于定义了以上的foo为vec2类型，占用8Bytes，故：
-
-        model模型变换阵：基础偏移为 8Bytes
-        view视图变换阵：基础偏移为 8Bytes+64Bytes = 72Bytes
-        proj投影变换阵：基础偏移为 72Bytes+64Bytes = 136Bytes
-
-        可见以上没有一个数值是16的倍数，这不满足mat4类型的对齐要求，所以才会出现错误
-    */
-    // glm::mat4 model;
-    // 如果你完成了第六步，可以打开以上的注释
-    // glm::mat4 view;
-    // glm::mat4 proj;
-    /*
-        但是以上的任何一个偏移量都不是16的倍数（这是由于在结构体最开始定义的vec2造成的，它有
-    8Bytes的偏移），所以我们修改如下，使得model被强行置为16Bytes的偏移，可以预见到的是它之后
-    的view和proj矩阵也同样满足了16Bytes倍数偏移的需求。
-        （使用到C++11新特性alignas）
-        如果现在运行程序，会发现得到了正确的结果
-    */
     alignas(16) glm::mat4 model;
-    glm::mat4 view;
-    glm::mat4 proj;
-
-    /*
-        然而除了以上的方法，我们还有另外的方法来解决这一问题，且不必总是费心考虑数据对齐的问题。
-    详见第六步。
-    */
+    alignas(16) glm::mat4 view;
+    alignas(16) glm::mat4 proj;
 };
 
 extern VkDescriptorSetLayout descriptorSetLayout;
