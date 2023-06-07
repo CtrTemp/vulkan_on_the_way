@@ -85,9 +85,14 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uin
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = swapChainExtent;
     // 指定开始渲染前framebuffer中的像素颜色，以下设置为全黑
-    VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
-    renderPassInfo.clearValueCount = 1;
-    renderPassInfo.pClearValues = &clearColor;
+    // 不仅要对 framebuffer 进行考虑，还要对 depthbuffer 进行考虑
+
+    std::array<VkClearValue, 2> clearValues{};
+    clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}}; // framebuffer 清空为全黑
+    clearValues[1].depthStencil = {1.0f, 0};           // depthbuffer 清空为单一深度值
+
+    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    renderPassInfo.pClearValues = clearValues.data();
 
     /**
      * 填充指令1：启动RenderPass

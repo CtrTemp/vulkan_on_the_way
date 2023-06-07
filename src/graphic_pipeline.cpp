@@ -65,10 +65,10 @@ void createGraphicsPipeline()
     configure_rasterizer(rasterizer);
 
     /**
-     *  跳过fragment shader片段着色器：整个 graphic pipeline 中的第六个阶段，图元（三角形）内部的部分将被以插值的方式赋值，
-     * 这将由其所属图元（三角形）顶点的光照信息/法线信息/纹理值决定。
-     * ？？？ 不可编程且不可设置？？？
+     *  depth stencil 深度图模板配置。
      * */
+    VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    configure_depth_stencil(depthStencil);
 
     /**
      *  配置多重采样，进行图像抗锯齿、提高生成图像质量的之而有效的手段
@@ -119,7 +119,7 @@ void createGraphicsPipeline()
     pipelineInfo.pViewportState = &viewportState;
     pipelineInfo.pRasterizationState = &rasterizer;
     pipelineInfo.pMultisampleState = &multisampling;
-    pipelineInfo.pDepthStencilState = nullptr; // Optional
+    pipelineInfo.pDepthStencilState = &depthStencil;
     pipelineInfo.pColorBlendState = &colorBlending;
     pipelineInfo.pDynamicState = &dynamicState;
 
@@ -152,7 +152,6 @@ void createGraphicsPipeline()
     vkDestroyShaderModule(device, fragShaderModule, nullptr);
     vkDestroyShaderModule(device, vertShaderModule, nullptr);
 }
-
 
 /**
  *  销毁图形渲染管线

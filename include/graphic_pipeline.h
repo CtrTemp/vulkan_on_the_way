@@ -30,6 +30,7 @@
 #include "graphic_pipeline/input_assembly.h"
 #include "graphic_pipeline/viewport.h"
 #include "graphic_pipeline/rasterizer.h"
+#include "graphic_pipeline/depth_stencil.h"
 #include "graphic_pipeline/multi_sampling.h"
 #include "graphic_pipeline/color_blending.h"
 

@@ -90,7 +90,7 @@ VK_QUEUE_TRANSFER_BIT 指示位。但现在很好的一点是，目前我们已�
  * */
 struct Vertex
 {
-    glm::vec2 pos;      // 顶点位置坐标
+    glm::vec3 pos;      // 顶点位置坐标
     glm::vec3 color;    // 顶点颜色
     glm::vec2 texCoord; // 添加UV贴图对应的二维纹理
 
@@ -113,10 +113,10 @@ struct Vertex
     static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
     {
         std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
-        // pos vec2
+        // pos vec3
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
         // color vec3

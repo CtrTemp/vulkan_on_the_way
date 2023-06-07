@@ -19,6 +19,7 @@
 #include "logical_device_queue.h"
 #include "image_view.h"
 #include "swapchain.h"
+#include "depth_buffer.h"
 
 /*
     Introduction：

@@ -11,6 +11,7 @@ uint32_t currentFrame = 0; // 当前帧 index
  * */
 void drawFrame()
 {
+    std::cout << "start to draw" << std::endl;
     // 开启 CPU 端计时器
     clock_t begin, end;
     begin = clock();
@@ -188,6 +189,7 @@ void recreateSwapChain()
     */
     createSwapChain();
     createImageViews();
+    createDepthResources();
     createFramebuffers();
     /*
         以上的方法虽然可以正确的重建交换链，但该方法的缺点是，我们不得不在需要创建新的交换链时停掉所有正在

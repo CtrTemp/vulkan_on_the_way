@@ -46,5 +46,4 @@ void main() {
         如果你想看到原定义颜色与纹理采样叠加的效果，可以进行如下修改
     */ 
     outColor = vec4(fragColor * texture(texSampler, fragTexCoord).rgb, 1.0);
-    // outColor = texture(texSampler, fragTexCoord * 2.0);
 }

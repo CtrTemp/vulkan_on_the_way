@@ -48,7 +48,18 @@ void createImage(uint32_t width,
 /**
  *  创建单一ImageView实例
  * */
-VkImageView createImageView(VkImage image, VkFormat format);
+VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+
+/**
+ *  图像布局转换，使得其内存排布更适合接下来要进行的操作。
+ *  如优化为最适合数据传输的形式/数据读写的形式。
+ * */
+void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+
+/**
+ *  将texture数据拷贝到设备内存
+ * */
+void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 /**
  *  ImageView相关实例的销毁

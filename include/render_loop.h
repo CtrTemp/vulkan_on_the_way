@@ -22,6 +22,7 @@
 #include "swapchain.h"
 #include "command_buffer.h"
 #include "uniform_buffer.h"
+#include "depth_buffer.h"
 
 /*
     （题外话：在本章执行程序时发现一个问题，其实读取文件时的相对路径，“相对的”并非是可执行文件的位置，而是看

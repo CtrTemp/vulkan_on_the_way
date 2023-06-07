@@ -32,13 +32,12 @@
 #include "uniform_buffer.h"
 
 #include "texture.h"
+#include "depth_buffer.h"
 
 /**
  *  当前vulkan图形工程总体的初始化配置，对一些渲染管线中必要的实例对象的创建
  * */
 void initVulkan();
-
-
 
 /**
  *  实例对象的析构销毁，基本遵循先创建的后销毁，后创建的先销毁

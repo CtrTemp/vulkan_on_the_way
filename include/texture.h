@@ -22,6 +22,7 @@
 #include <optional>
 #include <set>
 
+#include "image_view.h"
 #include "command_buffer.h"
 
 extern VkImage textureImage;              // 声明 纹理贴图实例
@@ -34,16 +35,6 @@ extern VkSampler textureSampler;          // 声明 纹理图采样器实例
  * */
 void createTextureImage();
 
-/**
- *  图像布局转换，使得其内存排布更适合接下来要进行的操作。
- *  如优化为最适合数据传输的形式/数据读写的形式。
- * */
-void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
-
-/**
- *  将texture数据拷贝到设备内存
- * */
-void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
 
 /**
  *  为纹理贴图创建配套的 ImageView

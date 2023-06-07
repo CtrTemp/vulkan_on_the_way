@@ -31,9 +31,11 @@ void initVulkan()
 
     createGraphicsPipeline(); // 创建渲染图形管线
 
-    createFramebuffers(); // 创建帧缓冲区
-
     createCommandPool(); // 创建命令池
+
+    createDepthResources(); // 创建深度缓冲区
+
+    createFramebuffers(); // 创建帧缓冲区
 
     createTextureImage(); // 创建纹理贴图
 

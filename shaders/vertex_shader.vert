@@ -7,10 +7,7 @@
 */ 
 #version 450
 
-/*
-    第二步，在这里添加MVP变换阵，引入这个 “统一缓冲区” 对象，可见当前这个对象是在顶点着色器
-文件中硬编码进去的（至少当作一个占位符存在）
-*/ 
+
 layout(binding = 0) uniform UniformBufferObject {
     // vec2 foo;
     mat4 model;
@@ -20,12 +17,10 @@ layout(binding = 0) uniform UniformBufferObject {
 
 
 
-/*
-    第六步，修改fragment shader从而使其可以直接从纹理进行采样
-*/ 
-
 // 这里对应的就是C++中写的 verteies
-layout(location = 0) in vec2 inPosition;    // 实际坐标
+// 第三步，将Vertex shader中的vec2也对应改为vec3
+// layout(location = 0) in vec2 inPosition;    // 实际坐标
+layout(location = 0) in vec3 inPosition; 
 layout(location = 1) in vec3 inColor;       // 实际顶点颜色
 layout(location = 2) in vec2 inTexCoord;    // 顶点对应UV坐标（这是新添加的）
 
@@ -45,7 +40,7 @@ layout(location = 1) out vec2 fragTexCoord; // 片段对应的纹理坐标（这
 
 void main() {
     // gl_Position 是默认变量，输出到vertex shader，以下这里应用了mvp变换
-    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 0.0, 1.0);
+    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
     fragColor = inColor;
     fragTexCoord = inTexCoord; // 同样，我们将UV值也传给后面的fragment shader
 }
