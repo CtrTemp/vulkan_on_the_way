@@ -4,26 +4,31 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include <algorithm>
+#include <chrono>
 #include <vector>
 #include <cstring>
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
+#include <array>
 #include <optional>
 #include <set>
+#include <unordered_map>
 
-// 首先应引入GLM矩阵库
-#include <glm/glm.hpp>
 
-#include <array>
-
-// #include "physical_device_queue.h"
-// #include "logical_device_queue.h"
-// #include "command_buffer.h"
+extern const std::string MODEL_PATH;
+extern const std::string TEXTURE_PATH;
 
 #include "buffers/buffers_operation.h"
 
@@ -133,15 +138,40 @@ struct Vertex
 
         return attributeDescriptions;
     }
+
+    // 算符重载
+    bool operator==(const Vertex &other) const
+    {
+        return pos == other.pos && color == other.color && texCoord == other.texCoord;
+    }
 };
 
-extern const std::vector<Vertex> vertices; // 声明 存储在CPU内存上的“顶点”源数据
-extern VkBuffer vertexBuffer;              // 声明 vertex buffer 实例
-extern VkDeviceMemory vertexBufferMemory;  // 声明 vertex buffer 对应在 GPU device 上的内存
+/*
+    第八步，
+    同样是配合第七步中 unordered_map 的使用，需要为其创建一个特殊的哈希查找函数
+*/
+namespace std
+{
+    template <>
+    struct hash<Vertex>
+    {
+        size_t operator()(Vertex const &vertex) const
+        {
+            return ((hash<glm::vec3>()(vertex.pos) ^
+                     (hash<glm::vec3>()(vertex.color) << 1)) >>
+                    1) ^
+                   (hash<glm::vec2>()(vertex.texCoord) << 1);
+        }
+    };
+}
 
-extern const std::vector<uint16_t> indices; // 声明 存储在CPU内存上的“顶点索引”源数据
-extern VkBuffer indexBuffer;                // 声明 index buffer 实例
-extern VkDeviceMemory indexBufferMemory;    // 声明 index buffer 对应在 GPU device 上的内存
+extern std::vector<Vertex> vertices;      // 声明 存储在CPU内存上的“顶点”源数据
+extern VkBuffer vertexBuffer;             // 声明 vertex buffer 实例
+extern VkDeviceMemory vertexBufferMemory; // 声明 vertex buffer 对应在 GPU device 上的内存
+
+extern std::vector<uint32_t> indices;    // 声明 存储在CPU内存上的“顶点索引”源数据
+extern VkBuffer indexBuffer;             // 声明 index buffer 实例
+extern VkDeviceMemory indexBufferMemory; // 声明 index buffer 对应在 GPU device 上的内存
 
 /**
  *  GPU上创建 Vertex Buffer，并导入顶点数据
@@ -162,5 +192,10 @@ void cleanupVertexBuffer();
  * 注销 Index Buffer，释放其对应的内存
  * */
 void cleanupIndexBuffer();
+
+/**
+ *  模型文件导入
+ * */
+void loadModel();
 
 #endif

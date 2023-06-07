@@ -133,8 +133,9 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex, uin
 
     /**
      * 填充指令6：绑定 index buffer（这将作为顶点索引数据源传入graphic pipeline）
+     * 当有模型文件需要导入的时候，UINT16不够用，这里要使用UINT32类型记录INDEX
      */
-    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
     /**
      * 填充指令7：绑定描述符，这将每帧更新的MVP变换阵以pipelineLayout作为接口传入graphic pipeline

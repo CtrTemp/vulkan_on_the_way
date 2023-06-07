@@ -43,6 +43,8 @@ void initVulkan()
 
     createTextureSampler(); // 创建纹理采样器
 
+    loadModel();
+
     createVertexBuffer(); // 创建顶点缓冲区
 
     createIndexBuffer(); // 创建索引缓冲区

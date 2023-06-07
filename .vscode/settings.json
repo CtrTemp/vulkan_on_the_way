@@ -69,6 +69,15 @@
         "typeinfo": "cpp",
         "filesystem": "cpp",
         "strstream": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "*.ipp": "cpp",
+        "*.inc": "cpp",
+        "ranges": "cpp",
+        "shared_mutex": "cpp",
+        "valarray": "cpp",
+        "__config": "cpp",
+        "__hash_table": "cpp",
+        "__string": "cpp",
+        "__tree": "cpp"
     }
 }

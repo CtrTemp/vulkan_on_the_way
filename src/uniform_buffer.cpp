@@ -103,7 +103,9 @@ void updateUniformBuffer(uint32_t currentImage)
         使用glm::rotate函数对图形进行“旋转”操作，time * glm::radians(90.0f)保证每秒旋转90度（这里
     应该对应的是沿图形的 y 轴坐标进行旋转），注意这里进行的是 M -> 模型变换阵
     */
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // 如果想让模型转动稍微缓慢一点可以对这里的角度进行修改
+    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     /*
         视口变换阵相关操作：以下的操作使得我们并非沿着正冲着表面的方向观察，而是在其斜上方45度的位置进行观察，
@@ -185,7 +187,6 @@ void createDescriptorSets()
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         imageInfo.imageView = textureImageView;
         imageInfo.sampler = textureSampler;
-
 
         std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 

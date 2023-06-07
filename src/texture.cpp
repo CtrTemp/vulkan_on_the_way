@@ -18,7 +18,7 @@ void createTextureImage()
 {
     int texWidth, texHeight, texChannels;
     // 借助 stb_image 库加载图片，并获取其尺寸/通道数等附加信息
-    stbi_uc *pixels = stbi_load("../textures/texture.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc *pixels = stbi_load("../textures/viking_room.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
     /**
      *  图像占用内存空间计算
