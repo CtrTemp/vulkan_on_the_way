@@ -189,6 +189,7 @@ void recreateSwapChain()
     */
     createSwapChain();
     createImageViews();
+    createColorResources();
     createDepthResources();
     createFramebuffers();
     /*

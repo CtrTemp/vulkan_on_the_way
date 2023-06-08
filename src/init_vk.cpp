@@ -33,6 +33,8 @@ void initVulkan()
 
     createCommandPool(); // 创建命令池
 
+    createColorResources();
+
     createDepthResources(); // 创建深度缓冲区
 
     createFramebuffers(); // 创建帧缓冲区
@@ -65,6 +67,8 @@ void initVulkan()
 void cleanupVulkan()
 {
     cleanupSwapChain();
+
+    cleanupMultiSampleColorResource();
 
     cleanupTextureRelated();
 

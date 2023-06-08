@@ -20,6 +20,7 @@
 #include "image_view.h"
 #include "swapchain.h"
 #include "depth_buffer.h"
+#include "graphic_pipeline/multi_sampling.h"
 
 /*
     Introduction：

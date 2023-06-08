@@ -25,6 +25,8 @@
 #include "image_view.h"
 #include "command_buffer.h"
 
+extern uint32_t mipLevels; // 声明 当前所使用的 mipmap 等级
+
 extern VkImage textureImage;              // 声明 纹理贴图实例
 extern VkDeviceMemory textureImageMemory; // 声明 纹理贴图内存
 extern VkImageView textureImageView;      // 声明 纹理图的 ImageView 实例
@@ -35,7 +37,6 @@ extern VkSampler textureSampler;          // 声明 纹理图采样器实例
  * */
 void createTextureImage();
 
-
 /**
  *  为纹理贴图创建配套的 ImageView
  * */
@@ -45,6 +46,11 @@ void createTextureImageView();
  *  创建纹理采样器
  * */
 void createTextureSampler();
+
+/**
+ *  创建 mipmap
+ * */
+void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
 /**
  *  注销纹理贴图相关的组件

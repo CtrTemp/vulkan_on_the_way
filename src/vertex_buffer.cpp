@@ -5,9 +5,9 @@
 #include <tiny_obj_loader.h>
 
 // 指明模型文件/模型对应贴图文件路径
-// const std::string MODEL_PATH = "../models/viking_room.obj";
+const std::string MODEL_PATH = "../models/viking_room.obj";
 // const std::string MODEL_PATH = "../models/bunny_low_resolution.obj";
-const std::string MODEL_PATH = "../models/fish.obj";
+// const std::string MODEL_PATH = "../models/fish.obj";
 // const std::string TEXTURE_PATH = "../textures/viking_room.png";
 
 // const std::vector<Vertex> vertices = {

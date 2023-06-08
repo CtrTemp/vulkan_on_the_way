@@ -36,6 +36,7 @@ void createLogicalDevice()
      * （该功能在texture related部分添加，要用到纹理贴图的采样）
      * */
     deviceFeatures.samplerAnisotropy = VK_TRUE;
+    deviceFeatures.sampleRateShading = VK_TRUE; // enable sample shading feature for the device
 
     // 开始创建逻辑设备
     VkDeviceCreateInfo createInfo{};

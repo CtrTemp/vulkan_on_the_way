@@ -20,6 +20,7 @@
 #include "image_view.h"
 #include "render_passes.h"
 #include "depth_buffer.h"
+#include "graphic_pipeline/multi_sampling.h"
 
 /*
     Introduction：

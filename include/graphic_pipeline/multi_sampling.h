@@ -16,10 +16,26 @@
 #include <optional>
 #include <set>
 
+#include "physical_device_queue.h"
+#include "swapchain.h"
+#include "image_view.h"
+
+extern VkSampleCountFlagBits msaaSamples;
+
+extern VkImage colorImage;
+extern VkDeviceMemory colorImageMemory;
+extern VkImageView colorImageView;
+
 
 /**
  *  配置多重采样，进行图像抗锯齿、提高生成图像质量的之而有效的手段
  * */
 void configure_multi_sampling(VkPipelineMultisampleStateCreateInfo &multisampling);
+
+VkSampleCountFlagBits getMaxUsableSampleCount();
+
+void createColorResources();
+
+void cleanupMultiSampleColorResource();
 
 #endif

@@ -12,9 +12,11 @@ void createFramebuffers()
     for (size_t i = 0; i < swapChainImageViews.size(); i++)
     {
         // VkImageView attachments[] = {swapChainImageViews[i]};
-        std::array<VkImageView, 2> attachments = {
+        std::array<VkImageView, 3> attachments = {
+            colorImageView,
+            depthImageView,
             swapChainImageViews[i],
-            depthImageView};
+        };
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

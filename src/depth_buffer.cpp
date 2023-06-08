@@ -14,6 +14,8 @@ void createDepthResources()
     createImage(
         swapChainExtent.width,
         swapChainExtent.height,
+        1,
+        VK_SAMPLE_COUNT_1_BIT,
         depthFormat,
         VK_IMAGE_TILING_OPTIMAL,
         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, // 表示创建的是深度图模板实例
@@ -21,7 +23,7 @@ void createDepthResources()
         depthImage,
         depthImageMemory);
 
-    depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
 
     // // 显式地将图像布局转换为深度图附件，虽然这将在RenderPass中被处理，但为了方便理解，我们还是这样做
     // transitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
