@@ -11,7 +11,6 @@ uint32_t currentFrame = 0; // 当前帧 index
  * */
 void drawFrame()
 {
-    std::cout << "start to draw" << std::endl;
     // 开启 CPU 端计时器
     clock_t begin, end;
     begin = clock();
@@ -107,7 +106,7 @@ void drawFrame()
 
     // 当前帧渲染计时结束--CPU时间，不过由于有 fence 对CPU的任务提交进行阻塞，所以这里得到的渲染时间应该也是准确的
     end = clock();
-    std::cout << "time cost = " << end - begin << "ms" << std::endl;
+    // std::cout << "time cost = " << end - begin << "ms" << std::endl;
 }
 
 /**

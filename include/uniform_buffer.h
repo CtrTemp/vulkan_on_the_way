@@ -24,6 +24,8 @@
 #include "texture.h"
 #include "buffers/buffers_operation.h"
 
+#include "interaction/camera.h"
+
 /*
     Introduction 01：
     在这个章节我们将转向学习3D图形绘制相关的一些知识，其中最重要的应该要数矩阵变换/视图投影了。当我们想要对矩阵

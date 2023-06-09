@@ -105,19 +105,25 @@ void updateUniformBuffer(uint32_t currentImage)
     */
     // ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     // 如果想让模型转动稍微缓慢一点可以对这里的角度进行修改
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     /*
         视口变换阵相关操作：以下的操作使得我们并非沿着正冲着表面的方向观察，而是在其斜上方45度的位置进行观察，
     这个是固定的，并不随着每帧的变化而变化。
     */
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    // 尝试从 camera 中获取 view 变换阵
+    ubo.view = prim_camera.GetViewMatrix(time);
 
     /*
         投影变换阵操作：这里选用透视投影法（远小近大）从而获得更加真实的视图（与之对应的是平行投影法），同样是
     45度斜侧观察。考虑当前视图交换链中的图像大小。
     */
-    ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+    // ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+
+    // 尝试从 camera 中获取 project 变换阵
+    ubo.proj = glm::perspective(glm::radians(fov), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+
     /*
         因为GLM最初是为OpenGL设计的，而OpenGL中的Y轴坐标和Vulkan中的Y轴计算方式恰好相反，所以这里应该考虑
     使用以下的操作进行矫正（当然你也可以暂时注销这里，查看是否会获得Y轴镜像的效果）

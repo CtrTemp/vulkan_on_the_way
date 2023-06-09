@@ -25,6 +25,8 @@ int main()
     {
         glfwPollEvents();
         drawFrame();
+        processInput(window);
+        prim_camera.UpdataCameraPosition();
     }
 
     cleanupVulkan();
