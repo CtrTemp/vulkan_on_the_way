@@ -12,6 +12,10 @@
 #include "render_passes.h"
 #include "init_imgui.h"
 
+#include "./font/font_lishu_CN_base85.h"
+#include "./font/font_lishu_CN_nocompress.h"
+#include "./font/font_lishu_CN_nostatic.h"
+
 int main()
 {
 
@@ -19,7 +23,7 @@ int main()
 
     initVulkan();
 
-    init_imgui_frame();
+    imguiSetup();
 
     while (!glfwWindowShouldClose(window))
     {

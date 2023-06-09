@@ -105,15 +105,15 @@ void updateUniformBuffer(uint32_t currentImage)
     */
     // ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     // 如果想让模型转动稍微缓慢一点可以对这里的角度进行修改
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
     /*
         视口变换阵相关操作：以下的操作使得我们并非沿着正冲着表面的方向观察，而是在其斜上方45度的位置进行观察，
     这个是固定的，并不随着每帧的变化而变化。
     */
-    // ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
     // 尝试从 camera 中获取 view 变换阵
-    ubo.view = prim_camera.GetViewMatrix(time);
+    // ubo.view = prim_camera.GetViewMatrix(time);
 
     /*
         投影变换阵操作：这里选用透视投影法（远小近大）从而获得更加真实的视图（与之对应的是平行投影法），同样是

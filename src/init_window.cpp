@@ -65,7 +65,7 @@ void mouse_callback(GLFWwindow *window, double xPos, double yPos)
     lastX = xPos;
     lastY = yPos;
     prim_camera.ProcessMouseMovement(deltaX, deltaY);
-    std::cout << deltaX << ";" << deltaY << std::endl;
+    // std::cout << deltaX << ";" << deltaY << std::endl;
 }
 
 /**
